@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">ほ〜ん</string>
+
+    <!-- Twitter -->
+    <string name="twitter_consumer_key">jrK0FfB2gt1PZHsdXeOiE3xE0</string>
+    <string name="twitter_consumer_secret">k6IUbPrM4sy5VXWQHSoBkrnWEby6txbT5wXE795n2jAWdiEF9J</string>
+
+    <string name="twitter_callback_uri">nukoneko://ho-n/auth</string>
+    <string name="twitter_callback_schema">nukoneko</string>
+    <string name="twitter_callback_host">ho-n</string>
+    <string name="twitter_callback_path">/auth</string>
+
+</resources>
