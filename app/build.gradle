@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 apply plugin: 'io.fabric'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'realm-android'
 
 apply plugin: 'android-apt'
 
@@ -80,6 +81,9 @@ dependencies {
     // VI ButterKnife
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
+
+    // DataBase
+//    compile 'io.realm:realm-android:0.88.0-SNAPSHOT'
 
 
     //********** Test, fabric.io
