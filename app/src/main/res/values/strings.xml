@@ -1,5 +1,8 @@
 <resources>
+    <!-- System -->
     <string name="app_name">ほ〜ん</string>
+    <string name="app_name_system">ho-n</string>
+    <string name="app_package">info.nukoneko.android.ho_n</string>
 
     <!-- Twitter -->
     <string name="twitter_consumer_key">jrK0FfB2gt1PZHsdXeOiE3xE0</string>

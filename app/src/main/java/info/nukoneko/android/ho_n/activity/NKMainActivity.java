@@ -1,17 +1,19 @@
-package info.nukoneko.android.ho_n;
+package info.nukoneko.android.ho_n.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
+import info.nukoneko.android.ho_n.base.BaseActivity;
+import info.nukoneko.android.ho_n.util.text.NKToast;
 
 /**
  * Created by atsumi on 2016/10/19.
  */
 
-public final class MainActivity extends AppCompatActivity {
+public final class NKMainActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(authButton);
+
     }
 }
