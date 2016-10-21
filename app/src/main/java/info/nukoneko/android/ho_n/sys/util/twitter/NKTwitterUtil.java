@@ -44,6 +44,7 @@ public final class NKTwitterUtil {
         if (userId > 0 && hasAccessToken()) {
             twitter.setOAuthAccessToken(loadAccessToken(userId));
         }
+
         return twitter;
     }
 
@@ -83,7 +84,7 @@ public final class NKTwitterUtil {
      * @return false or true
      */
     public static boolean hasAccessToken() {
-        Realm realm = Realm.getInstance(sharedConfigration());
+        Realm realm = Realm.getDefaultInstance();
         RealmResults<NKModelAccessTokenObject> s = realm.where(NKModelAccessTokenObject.class).findAll();
         return s.size() > 0;
     }
@@ -98,7 +99,7 @@ public final class NKTwitterUtil {
         tokenObject.setUserToken(accessToken.getToken());
         tokenObject.setUserTokenSecret(accessToken.getTokenSecret());
 
-        Realm realm = Realm.getInstance(sharedConfigration());
+        Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(tokenObject);
         realm.commitTransaction();
@@ -108,7 +109,7 @@ public final class NKTwitterUtil {
 
 
     public static void deleteAccount(Long userId){
-        Realm realm = Realm.getInstance(sharedConfigration());
+        Realm realm = Realm.getDefaultInstance();
         NKModelAccessTokenObject result = realm.where(NKModelAccessTokenObject.class).equalTo("userId", userId).findFirst();
         if (result == null){
             return;
@@ -119,7 +120,7 @@ public final class NKTwitterUtil {
     }
 
     public static void deleteAllAccount(){
-        Realm realm = Realm.getInstance(sharedConfigration());
+        Realm realm = Realm.getDefaultInstance();
         RealmResults<NKModelAccessTokenObject> result = realm.where(NKModelAccessTokenObject.class).findAll();
         realm.beginTransaction();
         result.deleteAllFromRealm();
@@ -127,7 +128,7 @@ public final class NKTwitterUtil {
     }
 
     public static ArrayList<Long> getAccountIds() {
-        Realm realm = Realm.getInstance(sharedConfigration());
+        Realm realm = Realm.getDefaultInstance();
         ArrayList<Long> results = new ArrayList<>();
         results.addAll(Observable.from(
                 realm.where(NKModelAccessTokenObject.class).findAll())
@@ -137,7 +138,7 @@ public final class NKTwitterUtil {
     }
 
     public static ArrayList<NKModelAccessTokenObject> getAccounts() {
-        Realm realm = Realm.getInstance(sharedConfigration());
+        Realm realm = Realm.getDefaultInstance();
         ArrayList<NKModelAccessTokenObject> results = new ArrayList<>();
 
         results.addAll(Observable.from(
@@ -147,18 +148,18 @@ public final class NKTwitterUtil {
 
     @Nullable
     public static NKModelAccessTokenObject getAccount(Long userId) {
-        Realm realm = Realm.getInstance(sharedConfigration());
+        Realm realm = Realm.getDefaultInstance();
         return realm
                 .where(NKModelAccessTokenObject.class)
                 .equalTo("userId", userId)
                 .findFirst();
     }
 
-    private static RealmConfiguration sharedConfigration(){
-        return new RealmConfiguration.Builder()
-                .name("tw.account.realm")
-                .schemaVersion(1)
-                .modules(new NKModelAccessTokenObject())
-                .build();
-    }
+//    private static RealmConfiguration sharedConfigration(){
+//        return new RealmConfiguration.Builder()
+//                .name("tw.account.realm")
+//                .schemaVersion(1)
+//                .modules(new NKModelAccessTokenObject())
+//                .build();
+//    }
 }

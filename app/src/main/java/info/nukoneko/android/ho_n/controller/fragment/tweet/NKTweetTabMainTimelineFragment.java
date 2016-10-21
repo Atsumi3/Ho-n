@@ -14,21 +14,29 @@ import twitter4j.Twitter;
  */
 
 public final class NKTweetTabMainTimelineFragment extends NKTweetTabFragmentAbstract {
+
+    public static NKTweetTabMainTimelineFragment newInstance(long userId){
+        NKTweetTabMainTimelineFragment fragment = new NKTweetTabMainTimelineFragment();
+        Bundle args = new Bundle();
+        args.putLong(EXTRA_USER_ID, userId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public RxUtil.RxCallable<List<Status>> getStatuses() {
         return () -> {
-            Twitter twitter = NKTwitterUtil.getTwitterInstance(getContext(), 0);
+            Twitter twitter = NKTwitterUtil.getTwitterInstance(getContext(), getManagingUserId());
             return twitter.getHomeTimeline();
         };
     }
 
     @Override
     public String getTitle() {
-        return "HomeTimeline";
-    }
-
-    @Override
-    public void fragmentSetup(Bundle bundle) {
-
+        if (getUser() != null) {
+            return String.format("%s - HomeTimeline", getUser().getName());
+        } else {
+            return "HomeTimeline";
+        }
     }
 }

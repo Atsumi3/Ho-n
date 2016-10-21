@@ -44,4 +44,11 @@ public final class RxWrap {
                 .compose(objectTransformer)
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
+    public static <T> Observable<T> create(Observable<T> observable, Observable.Transformer<T, T> objectTransformer) {
+        return observable
+                .compose(objectTransformer)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
 }
