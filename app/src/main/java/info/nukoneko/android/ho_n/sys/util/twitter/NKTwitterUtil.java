@@ -129,13 +129,10 @@ public final class NKTwitterUtil {
     public static ArrayList<Long> getAccountIds() {
         Realm realm = Realm.getInstance(sharedConfigration());
         ArrayList<Long> results = new ArrayList<>();
-        for (NKModelAccessTokenObject token : realm.where(NKModelAccessTokenObject.class).findAll()){
-            try {
-                results.add(token.getUserId());
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
+        results.addAll(Observable.from(
+                realm.where(NKModelAccessTokenObject.class).findAll())
+                .map(NKModelAccessTokenObject::getUserId).toList().toBlocking().single()
+        );
         return results;
     }
 
@@ -150,7 +147,6 @@ public final class NKTwitterUtil {
 
     @Nullable
     public static NKModelAccessTokenObject getAccount(Long userId) {
-
         Realm realm = Realm.getInstance(sharedConfigration());
         return realm
                 .where(NKModelAccessTokenObject.class)
@@ -161,7 +157,7 @@ public final class NKTwitterUtil {
     private static RealmConfiguration sharedConfigration(){
         return new RealmConfiguration.Builder()
                 .name("tw.account.realm")
-                .schemaVersion(5)
+                .schemaVersion(1)
                 .modules(new NKModelAccessTokenObject())
                 .build();
     }

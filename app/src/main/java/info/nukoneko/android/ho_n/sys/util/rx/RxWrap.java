@@ -4,6 +4,9 @@ import android.app.ProgressDialog;
 
 import com.trello.rxlifecycle.LifecycleProvider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import info.nukoneko.android.ho_n.sys.eventbus.NKEvent;
 import info.nukoneko.android.ho_n.sys.eventbus.NKEventBusProvider;
 import rx.Observable;
@@ -25,11 +28,7 @@ public final class RxWrap {
     public static <T> Observable<T> create(Observable<T> observable) {
         return observable
                 .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .onErrorReturn(throwable -> {
-                    throwable.printStackTrace();
-                    return null;
-                });
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public static <T> Observable<T> create(Observable<T> observable, ProgressDialog progressDialog) {
@@ -37,11 +36,7 @@ public final class RxWrap {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(progressDialog::show)
-                .doOnCompleted(progressDialog::dismiss)
-                .onErrorReturn(throwable -> {
-                    throwable.printStackTrace();
-                    return null;
-                });
+                .doOnCompleted(progressDialog::dismiss);
     }
 
     public static Observable<NKEvent> eventCreate(Observable.Transformer<NKEvent, NKEvent> objectTransformer) {
