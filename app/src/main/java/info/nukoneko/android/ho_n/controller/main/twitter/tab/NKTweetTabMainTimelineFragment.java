@@ -13,6 +13,7 @@ import info.nukoneko.android.ho_n.sys.util.rx.RxUtil;
 import info.nukoneko.android.ho_n.sys.util.rx.RxWrap;
 import info.nukoneko.android.ho_n.sys.util.twitter.NKTwitterUtil;
 import rx.functions.Action1;
+import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
 
@@ -23,14 +24,8 @@ import twitter4j.Twitter;
 public final class NKTweetTabMainTimelineFragment extends NKTweetTabFragmentAbstract {
 
     @Override
-    public RxUtil.RxCallable<List<Status>> getDefaultStatuses() {
-        return () -> {
-            Twitter twitter = NKTwitterUtil.getInstance(getContext(), getManagingUserId());
-            if (twitter == null) {
-                return new ArrayList<>();
-            }
-            return twitter.getHomeTimeline();
-        };
+    public RxUtil.RxCallable<List<Status>> getDefaultStatuses(Twitter twitter, Paging paging) {
+        return () -> twitter.getHomeTimeline(paging);
     }
 
     @Override

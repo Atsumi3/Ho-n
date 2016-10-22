@@ -30,6 +30,9 @@ public final class NKTextUtil {
     private final static String PATTERN_TAG =
             "[#＃][Ａ–Ｚａ-ｚA-Za-z一-鿆0-9０-９ぁ-ヶｦ-ﾟー_]+";
 
+    private final static String PATTERN_ID =
+            "[@＠][a-zA-Z0-9_]+";
+
     /**
      * check format
      *
@@ -53,32 +56,53 @@ public final class NKTextUtil {
 
         // URL
         Pattern pattern = Pattern.compile(PATTERN_URL);
-        final Matcher urlMatcher = pattern.matcher(text);
-        while (urlMatcher.find()) {
-            int start = urlMatcher.start();
-            int end = urlMatcher.end();
-            final String uri = urlMatcher.group(0);
-            builder.setSpan(new ClickableSpan() {
-                @Override
-                public void onClick(View widget) {
-                    callback.onClickUri(uri);
-                }
-            }, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        {
+            final Matcher urlMatcher = pattern.matcher(text);
+            while (urlMatcher.find()) {
+                int start = urlMatcher.start();
+                int end = urlMatcher.end();
+                final String uri = urlMatcher.group(0);
+                builder.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                        callback.onClickUri(uri);
+                    }
+                }, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            }
         }
 
         // TAG
         pattern = Pattern.compile(PATTERN_TAG);
-        Matcher tagMatcher = pattern.matcher(text);
-        while (tagMatcher.find()) {
-            int start = tagMatcher.start();
-            int end = tagMatcher.end();
-            final String tag = tagMatcher.group(0).substring(1);
-            builder.setSpan(new ClickableSpan() {
-                @Override
-                public void onClick(View widget) {
-                    callback.onClickTag(tag);
-                }
-            }, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        {
+            final Matcher tagMatcher = pattern.matcher(text);
+            while (tagMatcher.find()) {
+                int start = tagMatcher.start();
+                int end = tagMatcher.end();
+                final String tag = tagMatcher.group(0).substring(1);
+                builder.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                        callback.onClickTag(tag);
+                    }
+                }, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            }
+        }
+
+        // ID
+        pattern = Pattern.compile(PATTERN_ID);
+        {
+            final Matcher idMatcher = pattern.matcher(text);
+            while (idMatcher.find()) {
+                int start = idMatcher.start();
+                int end = idMatcher.end();
+                final String userId = idMatcher.group(0).substring(1);
+                builder.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                        callback.onClickScreenName(userId);
+                    }
+                }, start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            }
         }
 
         return builder;

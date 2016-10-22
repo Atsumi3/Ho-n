@@ -6,6 +6,7 @@ import java.util.List;
 import info.nukoneko.android.ho_n.sys.eventbus.NKEventTwitter;
 import info.nukoneko.android.ho_n.sys.util.rx.RxUtil;
 import info.nukoneko.android.ho_n.sys.util.twitter.NKTwitterUtil;
+import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
 
@@ -16,14 +17,8 @@ import twitter4j.Twitter;
 public final class NKTweetTabMainUserFragment extends NKTweetTabFragmentAbstract {
 
     @Override
-    public RxUtil.RxCallable<List<Status>> getDefaultStatuses() {
-        return () -> {
-            Twitter twitter = NKTwitterUtil.getInstance(getContext(), getManagingUserId());
-            if (twitter == null) {
-                return new ArrayList<>();
-            }
-            return twitter.getUserTimeline();
-        };
+    public RxUtil.RxCallable<List<Status>> getDefaultStatuses(Twitter twitter, Paging paging) {
+        return () -> twitter.getUserTimeline(paging);
     }
 
     @Override

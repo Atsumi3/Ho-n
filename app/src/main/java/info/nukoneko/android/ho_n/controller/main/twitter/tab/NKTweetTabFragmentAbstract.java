@@ -14,6 +14,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import info.nukoneko.android.ho_n.R;
+import info.nukoneko.android.ho_n.controller.common.view.NKEndlessScrollListener;
 import info.nukoneko.android.ho_n.sys.base.BaseFragment;
 import info.nukoneko.android.ho_n.sys.eventbus.NKEventTwitter;
 import info.nukoneko.android.ho_n.sys.eventbus.event.OnStreamDeletionNoticeStatus;
@@ -25,8 +26,11 @@ import info.nukoneko.android.ho_n.sys.util.rx.Optional;
 import info.nukoneko.android.ho_n.sys.util.rx.RxUtil;
 import info.nukoneko.android.ho_n.sys.util.rx.RxWrap;
 import info.nukoneko.android.ho_n.sys.util.twitter.NKTwitterUtil;
+import rx.Observable;
 import rx.functions.Action1;
+import twitter4j.Paging;
 import twitter4j.Status;
+import twitter4j.Twitter;
 import twitter4j.User;
 
 /**
@@ -47,19 +51,18 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment
     private NKTweetAdapter adapter;
     @Nullable
     private NKTweetTabFragmentListener listener;
+    // userId
+    private long managingUserId = -1;
+    @Nullable private User user;
 
     @Override
     final public int fragmentLayoutId() {
         return R.layout.fragment_tweet_tab;
     }
 
-    public abstract RxUtil.RxCallable<List<Status>> getDefaultStatuses();
+    public abstract RxUtil.RxCallable<List<Status>> getDefaultStatuses(Twitter twitter, Paging paging);
     public abstract NKTwitterTabListType getListType();
     public abstract void receiveEvent(NKEventTwitter event);
-
-    // userId
-    private long managingUserId = -1;
-    @Nullable private User user;
 
     public Bundle getBundleOption(long userId) {
         Bundle args = new Bundle();
@@ -146,23 +149,51 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment
         }
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addOnScrollListener(new NKEndlessScrollListener((LinearLayoutManager) recyclerView.getLayoutManager()) {
+            @Override
+            public void onLoadMore(int current_page) {
+                loadTweet();
+            }
+        });
     }
 
     public NKTweetAdapter getAdapter() {
         return adapter;
     }
 
-    public void loadTweet() {
-        if (adapter.getItemCount() > 0) {
+    public void firstLoad() {
+        if (getAdapter().getItemCount() > 0) {
             Optional.ofNullable(listener).subscribe(NKTweetTabFragmentListener::refreshEnd);
             return;
         }
-        if (getView() != null) {
+        loadTweet();
+    }
+
+    void loadTweet() {
+        // ロードのためのページング取得
+        Twitter twitter = NKTwitterUtil.getInstance(getContext(), getManagingUserId());
+        if (twitter == null) {
+            Optional.ofNullable(listener).subscribe(NKTweetTabFragmentListener::refreshEnd);
+            return;
+        }
+        Paging paging;
+        {
+            Status lastItem = getAdapter().getLastItem();
+            if (lastItem == null) {
+                paging = new Paging(1);
+            } else {
+                paging = new Paging();
+                paging.setMaxId(lastItem.getId());
+            }
+        }
+        ///////////////////////////////////
+
+        if (getView() != null && adapter.getItemCount() == 0) {
             recyclerView.setVisibility(View.GONE);
             progressView.setVisibility(View.VISIBLE);
         }
 
-        RxWrap.create(RxUtil.createObservable(getDefaultStatuses()))
+        RxWrap.create(RxUtil.createObservable(getDefaultStatuses(twitter, paging)))
                 .onErrorReturn(throwable -> new ArrayList<>())
                 .subscribe(statuses -> {
                     Log.i("GetTweet", String.format("Num: %d", statuses.size()));

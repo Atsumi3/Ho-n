@@ -19,6 +19,7 @@ import info.nukoneko.android.ho_n.R;
 import info.nukoneko.android.ho_n.controller.common.view.NKSwipeRefreshLayout;
 import info.nukoneko.android.ho_n.controller.main.twitter.NKTwitterAuthActivity;
 import info.nukoneko.android.ho_n.controller.main.twitter.NKTwitterTabPagerAdapter;
+import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabMainMentionsFragment;
 import info.nukoneko.android.ho_n.sys.eventbus.event.NKTwitterUserStreamListener;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabFragmentAbstract;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabFragmentListener;
@@ -76,6 +77,7 @@ public final class NKMainActivity extends BaseActivity
                     Optional.ofNullable(NKTwitterUtil.getInstance(this, userID))
                             .subscribe(twitter -> {
                                 fragmentAdapter.addFragment(userID, NKTweetTabMainTimelineFragment.class);
+                                fragmentAdapter.addFragment(userID, NKTweetTabMainMentionsFragment.class);
                                 fragmentAdapter.addFragment(userID, NKTweetTabMainFavoriteFragment.class);
                                 makeStream(userID);
                             }));
@@ -99,7 +101,7 @@ public final class NKMainActivity extends BaseActivity
         Optional.ofNullable(getSupportFragmentManager().getFragments()).subscribe(fragments -> {
             Observable.from(fragments).forEach(fragment -> {
                 if (fragment instanceof NKTweetTabFragmentAbstract) {
-                    ((NKTweetTabFragmentAbstract) fragment).loadTweet();
+                    ((NKTweetTabFragmentAbstract) fragment).firstLoad();
                 }
             });
         });

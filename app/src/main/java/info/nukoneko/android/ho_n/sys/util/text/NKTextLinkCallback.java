@@ -15,10 +15,13 @@ public abstract class NKTextLinkCallback {
     }
 
     public void onClickUri(@NonNull String uri){
-        Log.d("onClickUri", "NotImplemented");
+        Log.d("onClickUri", uri);
     }
     public void onClickTag(@NonNull String tag){
-        Log.d("onClickTag", "NotImplemented");
+        Log.d("onClickTag", tag);
+    }
+    public void onClickScreenName(@NonNull String screenName){
+        Log.d("onClickTag", screenName);
     }
 
     public Context getContext() {
