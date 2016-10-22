@@ -68,6 +68,21 @@ public final class NKMainActivity extends BaseActivity
 
         fragmentAdapter = new NKTwitterTabPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(fragmentAdapter);
+
+        // viewSetting
+        ArrayList<Long> ids = NKTwitterUtil.getAccountIds();
+        if (ids.size() > 0) {
+            Observable.from(ids).forEach(userID ->
+                    Optional.ofNullable(NKTwitterUtil.getInstance(this, userID))
+                            .subscribe(twitter -> {
+                                fragmentAdapter.addFragment(userID, NKTweetTabMainTimelineFragment.class);
+                                fragmentAdapter.addFragment(userID, NKTweetTabMainFavoriteFragment.class);
+                                makeStream(userID);
+                            }));
+        } else {
+            // startAuth
+            startActivity(new Intent(this, NKTwitterAuthActivity.class));
+        }
     }
 
     @Override
@@ -76,25 +91,6 @@ public final class NKMainActivity extends BaseActivity
         if (viewPager.getAdapter() == null || fragmentAdapter == null) {
             fragmentAdapter = new NKTwitterTabPagerAdapter(getSupportFragmentManager());
             viewPager.setAdapter(fragmentAdapter);
-        }
-
-        // viewSetting
-        ArrayList<Long> ids = NKTwitterUtil.getAccountIds();
-        if (ids.size() > 0) {
-            Observable.from(ids).forEach(userID ->
-                    Optional.ofNullable(NKTwitterUtil.getInstance(this, userID))
-                            .subscribe(twitter -> {
-                                fragmentAdapter.addFragment(userID, NKTweetTabMainUserFragment.class);
-                                fragmentAdapter.addFragment(userID, NKTweetTabMainTimelineFragment.class);
-                                fragmentAdapter.addFragment(userID, NKTweetTabMainFavoriteFragment.class);
-
-                                viewPager.setCurrentItem(1);
-
-                                makeStream(userID);
-                            }));
-        } else {
-            // startAuth
-            startActivity(new Intent(this, NKTwitterAuthActivity.class));
         }
     }
 
