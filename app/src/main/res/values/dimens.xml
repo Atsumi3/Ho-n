@@ -1,1 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?><resources>    <dimen name="tweet_head">36dp</dimen></resources>
+<?xml version="1.0" encoding="utf-8"?><resources>    <dimen name="tweet_head">48dp</dimen>    <dimen name="tweet_images_margin_LR">20dp</dimen>    <dimen name="tweet_images_padding">4dp</dimen></resources>

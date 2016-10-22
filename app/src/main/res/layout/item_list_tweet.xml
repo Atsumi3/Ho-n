@@ -52,24 +52,28 @@
                 android:layout_toRightOf="@id/tweet_user_icon"
                 android:layout_toLeftOf="@id/tweet_status_re_tweet"
                 android:layout_toStartOf="@id/tweet_status_re_tweet"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp">
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
                 <TextView
                     android:id="@+id/tweet_user_name"
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
+                    android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:text="ユーザー名"
-                    android:textSize="13sp"
-                    android:textColor="@android:color/white"/>
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white"
+                    android:layout_weight="1"/>
                 <TextView
                     android:id="@+id/tweet_user_screen"
                     android:layout_width="match_parent"
-                    android:layout_height="16dp"
+                    android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:text="\@user_name"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/white"/>
+                    android:textSize="14sp"
+                    android:textColor="@android:color/white"
+                    android:layout_weight="1"/>
             </LinearLayout>
 
             <TextView
@@ -77,32 +81,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tweet_user_icon"
-                android:padding="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:text="ついーよ"
                 android:textColor="@android:color/white"
-                android:textSize="15sp"/>
+                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/tweet_status_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tweet_status_text"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
                 android:text="2016/10/09 12:34:56"
                 android:textColor="@android:color/white"
-                android:textSize="12sp"/>
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/tweet_status_via"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tweet_status_date"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
                 android:text="via TweetDeck"
                 android:textColor="@android:color/white"
-                android:textSize="12sp"/>
+                android:textSize="14sp"/>
 
 
             <HorizontalScrollView
@@ -134,27 +135,33 @@
                 <LinearLayout
                     android:id="@+id/tweet_reTweet_user_info"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/tweet_head"
                     android:layout_toLeftOf="@id/tweet_reTweet_user_icon"
                     android:orientation="vertical"
-                    android:paddingRight="4dp"
-                    android:paddingLeft="4dp">
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
+
                     <TextView
                         android:id="@+id/tweet_reTweet_user_name"
                         android:layout_width="match_parent"
-                        android:layout_height="20dp"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical|right"
                         android:text="ユーザー名"
-                        android:textSize="13sp"
-                        android:textColor="@android:color/white"/>
+                        android:textSize="16sp"
+                        android:textColor="@android:color/white"
+                        android:layout_weight="1"/>
+
                     <TextView
                         android:id="@+id/tweet_reTweet_user_screen"
                         android:layout_width="match_parent"
-                        android:layout_height="16dp"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical|right"
                         android:text="\@user_name"
-                        android:textSize="12sp"
-                        android:textColor="@android:color/white"/>
+                        android:textSize="14sp"
+                        android:textColor="@android:color/white"
+                        android:layout_weight="1"/>
                 </LinearLayout>
                 <TextView
                     android:layout_width="match_parent"
