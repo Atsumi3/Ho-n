@@ -63,6 +63,8 @@
                     android:gravity="center_vertical"
                     android:text="ユーザー名"
                     android:textSize="16sp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:textColor="@android:color/white"
                     android:layout_weight="1"/>
                 <TextView
@@ -134,10 +136,20 @@
                     android:layout_height="@dimen/tweet_head"
                     android:layout_alignParentRight="true"
                     android:src="@drawable/ic_dummy_human"/>
-                <LinearLayout
-                    android:id="@+id/tweet_reTweet_user_info"
+                <TextView
+                    android:id="@+id/tweet_reTweet_label"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/tweet_head"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center_vertical|right"
+                    android:text="ReTweeted by "
+                    android:textColor="@android:color/white"/>
+                <LinearLayout
+                    android:id="@+id/tweet_reTweet_user_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/tweet_head"
+                    android:layout_toRightOf="@+id/tweet_reTweet_label"
                     android:layout_toLeftOf="@id/tweet_reTweet_user_icon"
                     android:orientation="vertical"
                     android:paddingLeft="8dp"
@@ -150,6 +162,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical|right"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="ユーザー名"
                         android:textSize="16sp"
                         android:textColor="@android:color/white"
@@ -165,15 +179,6 @@
                         android:textColor="@android:color/white"
                         android:layout_weight="1"/>
                 </LinearLayout>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/tweet_head"
-                    android:layout_toLeftOf="@id/tweet_reTweet_user_info"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:gravity="center_vertical|right"
-                    android:text="ReTweeted by "
-                    android:textColor="@android:color/white"/>
             </RelativeLayout>
 
         </RelativeLayout>
