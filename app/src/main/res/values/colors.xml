@@ -8,10 +8,14 @@
 
     <!--<color name="colorBackLight">#AFEFAF</color>-->
     <color name="colorBackLight">#7BCD7B</color>
+    <color name="colorBackMiddle">#2B8D2B</color>
     <!--<color name="colorBackDark">#424242</color>-->
     <color name="colorBackDark">#1B471B</color>
 
     <!-- System Color -->
     <color name="colorTweetReTweet">#EAEAF7</color>
     <color name="colorTweetReTweetByMe">#F7A0F7</color>
+
+    <color name="colorStatusTweetAction">#BBFDBB</color>
+    <color name="colorStatusTweetActioned">#3B7D3B</color>
 </resources>

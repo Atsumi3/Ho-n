@@ -67,9 +67,6 @@ public final class NKTwitterAuthActivity extends BaseActivity {
     private void startAuth() {
         twitterAuthInstance = NKTwitterUtil.getInstance(this);
         assert twitterAuthInstance != null;
-
-        Log.d("CallbackURL", twitterAuthCallbackUri);
-
         RxWrap.create(RxUtil.createObservable(() -> {
             twitterAuthInstance.setOAuthAccessToken(null);
             twitterAuthRequestToken =

@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><resources>    <string-array name="entries_background">        <item>Green</item>        <item>Blue</item>    </string-array>    <string-array name="entry_values_background">        <item>GREEN</item>        <item>BLUE</item>    </string-array></resources>

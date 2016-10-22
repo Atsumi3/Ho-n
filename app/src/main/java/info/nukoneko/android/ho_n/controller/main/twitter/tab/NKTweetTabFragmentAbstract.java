@@ -3,10 +3,8 @@ package info.nukoneko.android.ho_n.controller.main.twitter.tab;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
 
@@ -40,7 +38,7 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment {
     // Valiable
     private NKTweetAdapter adapter;
     @Nullable
-    private NKTweetTAbFragmentListener listener;
+    private NKTweetTabFragmentListener listener;
 
     @Override
     final public int fragmentLayoutId() {
@@ -65,10 +63,9 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment {
         Log.d("Bundle USer Id", String.valueOf(bundle.getLong(EXTRA_USER_ID)));
         managingUserId = bundle.getLong(EXTRA_USER_ID, -1);
 
-        RxWrap
-                .create(RxUtil.createObservable(() -> NKTwitterUtil
-                        .getInstance(getContext(), managingUserId)
-                        .showUser(managingUserId)), bindToLifecycle()).subscribe(user -> {
+        RxWrap.create(RxUtil.createObservable(() -> NKTwitterUtil
+                .getInstance(getContext(), managingUserId)
+                .showUser(managingUserId)), bindToLifecycle()).subscribe(user -> {
             this.user = user;
             Optional.ofNullable(listener).subscribe(nkTweetTAbFragmentListener -> {
                 nkTweetTAbFragmentListener.updateUser(user);
@@ -102,8 +99,8 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof NKTweetTAbFragmentListener) {
-            listener = (NKTweetTAbFragmentListener) context;
+        if (context instanceof NKTweetTabFragmentListener) {
+            listener = (NKTweetTabFragmentListener) context;
         }
     }
 
@@ -116,13 +113,11 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment {
         }
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-//        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
     }
 
     public void loadTweet() {
         if (adapter.getItemCount() > 0) {
-            Optional.ofNullable(listener).subscribe(NKTweetTAbFragmentListener::refreshEnd);
+            Optional.ofNullable(listener).subscribe(NKTweetTabFragmentListener::refreshEnd);
             return;
         }
         if (getView() != null) {
@@ -139,7 +134,7 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment {
                         progressView.setVisibility(View.GONE);
                     }
                     adapter.addAll(statuses);
-                    Optional.ofNullable(listener).subscribe(NKTweetTAbFragmentListener::refreshEnd);
+                    Optional.ofNullable(listener).subscribe(NKTweetTabFragmentListener::refreshEnd);
                 }, Throwable::printStackTrace);
     }
 }

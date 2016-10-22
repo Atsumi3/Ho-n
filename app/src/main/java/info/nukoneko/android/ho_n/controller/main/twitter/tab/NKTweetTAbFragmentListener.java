@@ -6,7 +6,7 @@ import twitter4j.User;
  * Created by atsumi on 2016/10/21.
  */
 
-public interface NKTweetTAbFragmentListener {
+public interface NKTweetTabFragmentListener {
     void refreshEnd();
     void updateUser(User user);
 }

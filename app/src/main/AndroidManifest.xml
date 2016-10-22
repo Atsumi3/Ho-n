@@ -29,6 +29,12 @@
             </intent-filter>
         </activity>
 
+        <!-- Setting -->
+        <activity android:name=".controller.setting.NKSettingActivity"
+                  android:theme="@style/Theme.AppCompat.DayNight"
+                  android:screenOrientation="portrait">
+        </activity>
+
         <!-- Twitter Auth -->
         <activity
             android:name=".controller.main.twitter.NKTwitterAuthActivity"
