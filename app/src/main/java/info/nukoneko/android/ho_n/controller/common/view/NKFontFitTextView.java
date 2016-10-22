@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 /**
  * TextViewの大きさに合わせて文字の大きさを変えるView
+ * 調整中に付き非推奨
  */
+@Deprecated
 public final class NKFontFitTextView extends TextView {
     private static final float MIN_TEXT_SIZE = 3.0f;
     private Paint mPaint = new Paint();

@@ -3,8 +3,10 @@ package info.nukoneko.android.ho_n.controller.main.twitter.tab;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
 
@@ -109,11 +111,13 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (adapter == null) {
-            adapter = new NKTweetAdapter();
+            adapter = new NKTweetAdapter(getContext());
             loadTweet();
         }
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+//        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+//        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
     }
 
     public void loadTweet() {

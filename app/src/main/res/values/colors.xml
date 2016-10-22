@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#307F30</color>
-    <color name="colorPrimaryDark">#287528</color>
-    <color name="colorAccent">#6FAF6F</color>
+    <!--<color name="colorPrimaryDark">#287528</color>-->
+    <color name="colorPrimaryDark">#225A22</color>
+    <!--<color name="colorAccent">#6FAF6F</color>-->
+    <color name="colorAccent">#7F307F</color>
 
-    <color name="colorBackLight">#AFEFAF</color>
+    <!--<color name="colorBackLight">#AFEFAF</color>-->
+    <color name="colorBackLight">#7BCD7B</color>
+    <!--<color name="colorBackDark">#424242</color>-->
+    <color name="colorBackDark">#0D220D</color>
+
+    <!-- System Color -->
+    <color name="colorTweetReTweet">#EAEAF7</color>
+    <color name="colorTweetReTweetByMe">#F7A0F7</color>
 </resources>

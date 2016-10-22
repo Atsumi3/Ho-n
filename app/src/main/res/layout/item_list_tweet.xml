@@ -5,9 +5,68 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:minHeight="48dp"
-    android:padding="16dp">
-    <TextView
-        android:id="@+id/text"
+    android:padding="8dp">
+    <android.support.v7.widget.CardView
+        android:id="@+id/tweet_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+            <info.nukoneko.android.ho_n.controller.common.view.NKRoundImageView
+                android:id="@+id/tweet_user_icon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_dummy_human"/>
+
+            <Button
+                android:id="@+id/tweet_status_favorite"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/ic_favorite_off"/>
+
+            <TextView
+                android:id="@+id/tweet_user_name"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_toEndOf="@id/tweet_user_icon"
+                android:layout_toRightOf="@id/tweet_user_icon"
+                android:layout_toLeftOf="@id/tweet_status_favorite"
+                android:layout_toStartOf="@id/tweet_status_favorite"
+                android:paddingLeft="4dp"
+                android:paddingStart="4dp"
+                android:paddingRight="4dp"
+                android:paddingEnd="4dp"
+                android:gravity="center_vertical"
+                android:text="ユーザー名"/>
+            <TextView
+                android:id="@+id/tweet_user_screen"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:layout_toEndOf="@id/tweet_user_icon"
+                android:layout_toRightOf="@id/tweet_user_icon"
+                android:layout_toLeftOf="@id/tweet_status_favorite"
+                android:layout_toStartOf="@id/tweet_status_favorite"
+                android:layout_below="@id/tweet_user_name"
+                android:paddingLeft="4dp"
+                android:paddingStart="4dp"
+                android:paddingRight="4dp"
+                android:paddingEnd="4dp"
+                android:gravity="center_vertical"
+                android:text="\@user_name"
+                android:textSize="11dp"/>
+
+            <TextView
+                android:id="@+id/tweet_status_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_user_icon"
+                android:padding="8dp"
+                android:text="ついーよ"/>
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 </RelativeLayout>
