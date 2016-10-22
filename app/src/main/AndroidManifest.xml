@@ -22,7 +22,7 @@
         android:name=".sys.util.NKAppController"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".controller.activity.NKMainActivity">
+        <activity android:name=".controller.main.NKMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -31,7 +31,7 @@
 
         <!-- Twitter Auth -->
         <activity
-            android:name=".controller.activity.NKTwitterAuthActivity"
+            android:name=".controller.main.twitter.NKTwitterAuthActivity"
             android:launchMode="singleTask" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>

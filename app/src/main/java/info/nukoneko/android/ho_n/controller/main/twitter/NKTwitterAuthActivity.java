@@ -1,4 +1,4 @@
-package info.nukoneko.android.ho_n.controller.activity;
+package info.nukoneko.android.ho_n.controller.main.twitter;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -9,6 +9,7 @@ import android.util.Log;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import info.nukoneko.android.ho_n.R;
+import info.nukoneko.android.ho_n.controller.main.NKMainActivity;
 import info.nukoneko.android.ho_n.sys.base.BaseActivity;
 import info.nukoneko.android.ho_n.sys.util.rx.Optional;
 import info.nukoneko.android.ho_n.sys.util.rx.RxUtil;
@@ -64,7 +65,7 @@ public final class NKTwitterAuthActivity extends BaseActivity {
     }
 
     private void startAuth() {
-        twitterAuthInstance = NKTwitterUtil.getTwitterInstance(this, 0);
+        twitterAuthInstance = NKTwitterUtil.getInstance(this);
         assert twitterAuthInstance != null;
 
         Log.d("CallbackURL", twitterAuthCallbackUri);

@@ -1,4 +1,4 @@
-package info.nukoneko.android.ho_n.controller.fragment.tweet;
+package info.nukoneko.android.ho_n.controller.main.twitter.tab;
 
 import twitter4j.User;
 
