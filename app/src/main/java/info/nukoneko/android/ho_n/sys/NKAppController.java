@@ -1,11 +1,14 @@
-package info.nukoneko.android.ho_n.sys.util;
+package info.nukoneko.android.ho_n.sys;
 
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.os.Build;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -28,6 +31,7 @@ public final class NKAppController extends Application {
     public AppInfo APP_INFO;
 
     private static NKAppController mInstance;
+    private Point windowSize = new Point();
 
     @Override
     public void onCreate() {
@@ -45,6 +49,14 @@ public final class NKAppController extends Application {
 
         // Initialize
         NKPicasso.setup(this);
+
+        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        display.getSize(this.windowSize);
+    }
+
+    public Point getWindowSize() {
+        return windowSize;
     }
 
     public static synchronized NKAppController getApp() {

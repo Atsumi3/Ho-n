@@ -13,6 +13,7 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import rx.Observable;
+import rx.functions.Func1;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
@@ -93,7 +94,7 @@ public final class NKTwitterUtil {
         if (!hasAccessToken()) return null;
 
         // 指定IDのアクセストークンを取得
-        AccessToken accessToken = loadAccessToken(userId);
+        AccessToken accessToken = getAccount(userId);
 
         if (accessToken == null) {
             // 指定IDのトークンが存在しなかったらnull
@@ -106,15 +107,6 @@ public final class NKTwitterUtil {
         return builder.build();
     }
 
-    @Nullable
-    private static AccessToken loadAccessToken(long userId) {
-        NKModelAccessTokenObject tokenObject = getAccount(userId);
-        if (tokenObject == null){
-            return null;
-        }
-        return new AccessToken(tokenObject.getUserToken(), tokenObject.getUserTokenSecret(), tokenObject.getUserId());
-    }
-
     /***
      * アクセストークンが存在する場合はtrueを返します。
      * @return false or true
@@ -122,7 +114,9 @@ public final class NKTwitterUtil {
     private static boolean hasAccessToken() {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<NKModelAccessTokenObject> s = realm.where(NKModelAccessTokenObject.class).findAll();
-        return s.size() > 0;
+        boolean ret = s.size() > 0;
+        realm.close();
+        return ret;
     }
 
     /* ---  database 操作 --- */
@@ -153,6 +147,7 @@ public final class NKTwitterUtil {
         realm.beginTransaction();
         result.deleteFromRealm();
         realm.commitTransaction();
+        realm.close();
     }
 
     public static void deleteAllAccount(){
@@ -161,6 +156,7 @@ public final class NKTwitterUtil {
         realm.beginTransaction();
         result.deleteAllFromRealm();
         realm.commitTransaction();
+        realm.close();
     }
 
     public static ArrayList<Long> getAccountIds() {
@@ -170,24 +166,44 @@ public final class NKTwitterUtil {
                 realm.where(NKModelAccessTokenObject.class).findAll())
                 .map(NKModelAccessTokenObject::getUserId).toList().toBlocking().single()
         );
+        realm.close();
         return results;
     }
 
-    public static ArrayList<NKModelAccessTokenObject> getAccounts() {
+    public static ArrayList<AccessToken> getAccounts() {
         Realm realm = Realm.getDefaultInstance();
-        ArrayList<NKModelAccessTokenObject> results = new ArrayList<>();
+        ArrayList<AccessToken> results = new ArrayList<>();
 
-        results.addAll(Observable.from(
-                realm.where(NKModelAccessTokenObject.class).findAll()).toList().toBlocking().single());
+        results.addAll(
+                Observable.from(realm.where(NKModelAccessTokenObject.class).findAll())
+                        .map(NKTwitterUtil::getToken)
+                        .filter(accessToken -> accessToken != null)
+                        .toList().toBlocking().single()
+        );
+        realm.close();
         return results;
     }
 
     @Nullable
-    private static NKModelAccessTokenObject getAccount(Long userId) {
+    private static AccessToken getAccount(Long userId) {
         Realm realm = Realm.getDefaultInstance();
-        return realm
+        NKModelAccessTokenObject at = realm
                 .where(NKModelAccessTokenObject.class)
                 .equalTo("userId", userId)
                 .findFirst();
+        AccessToken ret = getToken(at);
+        realm.close();
+        return ret;
+    }
+
+    @Nullable
+    private static AccessToken getToken(NKModelAccessTokenObject accessTokenObject) {
+        AccessToken ret = null;
+        if (accessTokenObject != null) {
+            ret = new AccessToken(accessTokenObject.getUserToken(),
+                    accessTokenObject.getUserTokenSecret(),
+                    accessTokenObject.getUserId());
+        }
+        return ret;
     }
 }

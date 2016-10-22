@@ -13,8 +13,9 @@
     <color name="colorBackDark">#1B471B</color>
 
     <!-- System Color -->
-    <color name="colorTweetReTweet">#EAEAF7</color>
-    <color name="colorTweetReTweetByMe">#F7A0F7</color>
+    <color name="colorTweet">#000000</color>
+    <color name="colorTweetReTweet">#402040</color>
+    <color name="colorTweetReTweetByMe">#404040</color>
 
     <color name="colorStatusTweetAction">#BBFDBB</color>
     <color name="colorStatusTweetActioned">#3B7D3B</color>

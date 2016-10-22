@@ -30,6 +30,15 @@ public final class Optional{
         }
     }
 
+    public static <T> Observable<T> ofParsable(Object object, Class<T> clazz){
+        if(clazz.isInstance(object)){
+            return Observable.just((T) object);
+        }
+        else{
+            return Observable.empty();
+        }
+    }
+
     public static <T> T get(Observable<T> observable){
         return observable.toBlocking().single();
     }

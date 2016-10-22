@@ -1,71 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:minHeight="48dp"
-    android:padding="8dp">
+    android:padding="1dp"
+    app:cardBackgroundColor="@android:color/background_dark">
     <android.support.v7.widget.CardView
         android:id="@+id/tweet_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@android:color/background_dark">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:paddingTop="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="4dp">
             <info.nukoneko.android.ho_n.controller.common.view.NKRoundImageView
                 android:id="@+id/tweet_user_icon"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="@dimen/tweet_head"
+                android:layout_height="@dimen/tweet_head"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_dummy_human"/>
 
             <Button
                 android:id="@+id/tweet_status_favorite"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="@dimen/tweet_head"
+                android:layout_height="@dimen/tweet_head"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/ic_favorite_off"/>
 
             <Button
                 android:id="@+id/tweet_status_re_tweet"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="@dimen/tweet_head"
+                android:layout_height="@dimen/tweet_head"
                 android:layout_toLeftOf="@id/tweet_status_favorite"
                 android:layout_marginRight="8dp"
                 android:background="@drawable/ic_re_tweet_off"/>
 
-            <TextView
-                android:id="@+id/tweet_user_name"
+            <LinearLayout
+                android:id="@+id/tweet_user_info"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
+                android:layout_height="@dimen/tweet_head"
+                android:orientation="vertical"
                 android:layout_toEndOf="@id/tweet_user_icon"
                 android:layout_toRightOf="@id/tweet_user_icon"
                 android:layout_toLeftOf="@id/tweet_status_re_tweet"
                 android:layout_toStartOf="@id/tweet_status_re_tweet"
                 android:paddingLeft="4dp"
-                android:paddingStart="4dp"
-                android:paddingRight="8dp"
-                android:paddingEnd="8dp"
-                android:gravity="center_vertical"
-                android:text="ユーザー名"/>
-            <TextView
-                android:id="@+id/tweet_user_screen"
-                android:layout_width="match_parent"
-                android:layout_height="16dp"
-                android:layout_toEndOf="@id/tweet_user_icon"
-                android:layout_toRightOf="@id/tweet_user_icon"
-                android:layout_toLeftOf="@id/tweet_status_favorite"
-                android:layout_toStartOf="@id/tweet_status_favorite"
-                android:layout_below="@id/tweet_user_name"
-                android:paddingLeft="4dp"
-                android:paddingStart="4dp"
-                android:paddingRight="4dp"
-                android:paddingEnd="4dp"
-                android:gravity="center_vertical"
-                android:text="\@user_name"
-                android:textSize="11dp"/>
+                android:paddingRight="4dp">
+                <TextView
+                    android:id="@+id/tweet_user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:gravity="center_vertical"
+                    android:text="ユーザー名"
+                    android:textSize="13sp"
+                    android:textColor="@android:color/white"/>
+                <TextView
+                    android:id="@+id/tweet_user_screen"
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"
+                    android:gravity="center_vertical"
+                    android:text="\@user_name"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/white"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tweet_status_text"
@@ -73,7 +78,94 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tweet_user_icon"
                 android:padding="8dp"
-                android:text="ついーよ"/>
+                android:text="ついーよ"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:id="@+id/tweet_status_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_status_text"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="2016/10/09 12:34:56"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/tweet_status_via"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_status_date"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="via TweetDeck"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"/>
+
+
+            <HorizontalScrollView
+                android:id="@+id/tweet_status_images_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_status_via">
+                <LinearLayout
+                    android:id="@+id/tweet_status_images"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone" />
+            </HorizontalScrollView>
+
+            <RelativeLayout
+                android:id="@+id/tweet_reTweet_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tweet_status_images_scroll"
+                android:background="@color/cardview_dark_background"
+                android:padding="8dp" >
+                <info.nukoneko.android.ho_n.controller.common.view.NKRoundImageView
+                    android:id="@+id/tweet_reTweet_user_icon"
+                    android:layout_width="@dimen/tweet_head"
+                    android:layout_height="@dimen/tweet_head"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_dummy_human"/>
+                <LinearLayout
+                    android:id="@+id/tweet_reTweet_user_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/tweet_reTweet_user_icon"
+                    android:orientation="vertical"
+                    android:paddingRight="4dp"
+                    android:paddingLeft="4dp">
+                    <TextView
+                        android:id="@+id/tweet_reTweet_user_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:gravity="center_vertical|right"
+                        android:text="ユーザー名"
+                        android:textSize="13sp"
+                        android:textColor="@android:color/white"/>
+                    <TextView
+                        android:id="@+id/tweet_reTweet_user_screen"
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp"
+                        android:gravity="center_vertical|right"
+                        android:text="\@user_name"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/white"/>
+                </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/tweet_head"
+                    android:layout_toLeftOf="@id/tweet_reTweet_user_info"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center_vertical|right"
+                    android:text="ReTweeted by "
+                    android:textColor="@android:color/white"/>
+            </RelativeLayout>
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>

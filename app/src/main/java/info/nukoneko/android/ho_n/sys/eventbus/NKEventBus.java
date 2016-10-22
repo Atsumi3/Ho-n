@@ -1,5 +1,7 @@
 package info.nukoneko.android.ho_n.sys.eventbus;
 
+import android.util.Log;
+
 import rx.Observable;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
@@ -17,6 +19,12 @@ public final class NKEventBus {
     }
 
     public void send(NKEvent o) {
+        Log.d("Event Send", o.toString());
+        mBus.onNext(o);
+    }
+
+    public void sendTwi(NKEventTwitter o) {
+        Log.d("Event SendTwi", o.toString());
         mBus.onNext(o);
     }
 

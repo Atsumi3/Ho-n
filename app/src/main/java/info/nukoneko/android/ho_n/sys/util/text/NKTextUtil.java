@@ -3,9 +3,13 @@ package info.nukoneko.android.ho_n.sys.util.text;
 import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.format.DateFormat;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,5 +82,18 @@ public final class NKTextUtil {
         }
 
         return builder;
+    }
+
+    public static CharSequence getDate(Date date) {
+        return DateFormat.format("yyyy年MM月dd日(E) kk:mm:ss", date);
+    }
+    public static String getVia(String tweetSource){
+        String reg = "<(.*)>(.*)<(.*)>";
+        Pattern pattern = Pattern.compile(reg);
+        Matcher matcher = pattern.matcher(tweetSource);
+        if (matcher.find()){
+            return matcher.group(2);
+        }
+        return "";
     }
 }

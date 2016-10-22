@@ -7,10 +7,11 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -18,9 +19,12 @@ import info.nukoneko.android.ho_n.R;
 import info.nukoneko.android.ho_n.controller.common.view.NKSwipeRefreshLayout;
 import info.nukoneko.android.ho_n.controller.main.twitter.NKTwitterAuthActivity;
 import info.nukoneko.android.ho_n.controller.main.twitter.NKTwitterTabPagerAdapter;
+import info.nukoneko.android.ho_n.sys.eventbus.event.NKTwitterUserStreamListener;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabFragmentAbstract;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabFragmentListener;
+import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabMainFavoriteFragment;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabMainTimelineFragment;
+import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabMainUserFragment;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.OnClickTweetListener;
 import info.nukoneko.android.ho_n.sys.base.BaseActivity;
 import info.nukoneko.android.ho_n.sys.util.rx.Optional;
@@ -53,6 +57,8 @@ public final class NKMainActivity extends BaseActivity
     @Nullable
     NKTwitterTabPagerAdapter fragmentAdapter;
 
+    private Map<Long, NKTwitterUserStreamListener> currentStream = new HashMap<>();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,11 +81,16 @@ public final class NKMainActivity extends BaseActivity
         // viewSetting
         ArrayList<Long> ids = NKTwitterUtil.getAccountIds();
         if (ids.size() > 0) {
-            Observable.from(ids)
-                    .forEach(userID -> Optional.ofNullable(NKTwitterUtil.getInstance(this, userID))
+            Observable.from(ids).forEach(userID ->
+                    Optional.ofNullable(NKTwitterUtil.getInstance(this, userID))
                             .subscribe(twitter -> {
-                                Log.d("追加?", (fragmentAdapter.addFragment(userID,
-                                        NKTweetTabMainTimelineFragment.class)) ? "追加した" : "追加できなかった");
+                                fragmentAdapter.addFragment(userID, NKTweetTabMainUserFragment.class);
+                                fragmentAdapter.addFragment(userID, NKTweetTabMainTimelineFragment.class);
+                                fragmentAdapter.addFragment(userID, NKTweetTabMainFavoriteFragment.class);
+
+                                viewPager.setCurrentItem(1);
+
+                                makeStream(userID);
                             }));
         } else {
             // startAuth
@@ -98,6 +109,21 @@ public final class NKMainActivity extends BaseActivity
         });
     }
 
+    private void makeStream(long userId) {
+        if (1 > userId) return;
+
+        if (currentStream.containsKey(userId)) return;
+
+        NKTwitterUserStreamListener streamListener = new NKTwitterUserStreamListener(userId);
+
+        Optional.ofNullable(NKTwitterUtil.getStreamInstance(this, userId))
+                .subscribe(twitterStream -> {
+                    twitterStream.addListener(streamListener);
+                    twitterStream.user();
+                    currentStream.put(userId, streamListener);
+        });
+    }
+
     //*** TabFragment Listener
     @Override
     public void refreshEnd() {
@@ -107,9 +133,6 @@ public final class NKMainActivity extends BaseActivity
     @Override
     public void updateUser(User user) {
         Optional.ofNullable(fragmentAdapter).subscribe(PagerAdapter::notifyDataSetChanged);
-        Snackbar.make(coordinatorLayout,
-                String.format("%s のデータをアップデートしました", user.getName()),
-                Snackbar.LENGTH_LONG).show();
     }
 
     //*** TweetListener

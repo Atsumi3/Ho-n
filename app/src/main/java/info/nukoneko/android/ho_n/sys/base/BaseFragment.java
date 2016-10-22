@@ -37,7 +37,6 @@ public abstract class BaseFragment extends RxFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        System.out.println("ViewCreated");
         fragmentSetup(getArguments());
     }
 
