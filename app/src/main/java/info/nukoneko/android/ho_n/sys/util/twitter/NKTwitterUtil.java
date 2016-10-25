@@ -104,6 +104,10 @@ public final class NKTwitterUtil {
         // 指定IDが存在したらセットして返す
         builder.setOAuthAccessToken(accessToken.getToken());
         builder.setOAuthAccessTokenSecret(accessToken.getTokenSecret());
+
+        // 140文字拡張
+        builder.setIncludeExtAltTextEnabled(true);
+
         return builder.build();
     }
 

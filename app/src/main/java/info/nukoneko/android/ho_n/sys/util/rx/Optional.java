@@ -1,5 +1,7 @@
 package info.nukoneko.android.ho_n.sys.util.rx;
 
+import android.support.annotation.Nullable;
+
 import rx.Observable;
 import rx.functions.Func0;
 
@@ -30,7 +32,7 @@ public final class Optional{
         }
     }
 
-    public static <T> Observable<T> ofParsable(Object object, Class<T> clazz){
+    public static <T> Observable<T> ofParsable(@Nullable Object object, Class<T> clazz){
         if(clazz.isInstance(object)){
             return Observable.just((T) object);
         }

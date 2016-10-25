@@ -17,6 +17,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import info.nukoneko.android.ho_n.R;
 import info.nukoneko.android.ho_n.controller.common.view.NKSwipeRefreshLayout;
+import info.nukoneko.android.ho_n.controller.main.twitter.NKTweetDialog;
 import info.nukoneko.android.ho_n.controller.main.twitter.NKTwitterAuthActivity;
 import info.nukoneko.android.ho_n.controller.main.twitter.NKTwitterTabPagerAdapter;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabMainMentionsFragment;
@@ -31,6 +32,7 @@ import info.nukoneko.android.ho_n.sys.base.BaseActivity;
 import info.nukoneko.android.ho_n.sys.util.rx.Optional;
 import info.nukoneko.android.ho_n.sys.util.twitter.NKTwitterUtil;
 import rx.Observable;
+import rx.functions.Action1;
 import twitter4j.Status;
 import twitter4j.User;
 
@@ -52,7 +54,12 @@ public final class NKMainActivity extends BaseActivity
 
     @OnClick(R.id.btn_tweet)
     void onClickTweet(View view) {
+        assert fragmentAdapter != null;
 
+        Optional.ofParsable(fragmentAdapter.getItem(viewPager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
+                .subscribe(nkTweetTabFragmentAbstract -> {
+                    NKTweetDialog.newInstance(nkTweetTabFragmentAbstract.getManagingUserId()).show(getSupportFragmentManager(), "frag");
+                });
     }
 
     @Nullable
@@ -85,6 +92,7 @@ public final class NKMainActivity extends BaseActivity
             // startAuth
             startActivity(new Intent(this, NKTwitterAuthActivity.class));
         }
+
     }
 
     @Override
@@ -147,5 +155,16 @@ public final class NKMainActivity extends BaseActivity
     @Override
     public void onClickTweetReTweet(Status status) {
         Snackbar.make(coordinatorLayout, status.getText(), Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onClickTweet(Status status) {
+        assert fragmentAdapter != null;
+
+        Optional.ofParsable(fragmentAdapter.getItem(viewPager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
+                .subscribe(nkTweetTabFragmentAbstract -> {
+                    NKTweetDialog.newInstance(nkTweetTabFragmentAbstract.getManagingUserId(), status)
+                            .show(getSupportFragmentManager(), "frag");
+                });
     }
 }

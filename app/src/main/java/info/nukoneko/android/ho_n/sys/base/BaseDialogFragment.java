@@ -29,6 +29,8 @@ public abstract class BaseDialogFragment extends RxDialogFragment {
     @NonNull
     abstract public Dialog dialogSetup(Dialog dialog);
 
+    abstract public void dialogSetupParams(Bundle bundle);
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -42,6 +44,12 @@ public abstract class BaseDialogFragment extends RxDialogFragment {
         View view = inflater.inflate(dialogLayoutId(), container, false);
         mUnBinder = ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        dialogSetupParams(getArguments());
     }
 
     @Override

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#EEEAEAEA"
+    android:layout_margin="8dp">
+    <ImageView
+        android:id="@+id/tweet_action_tweet_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription=""
+        tools:ignore="ContentDescription" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:background="@android:drawable/ic_menu_close_clear_cancel" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="64dp">
+
+        <RelativeLayout
+            android:id="@+id/tweet_action_tweet_target_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:visibility="gone">
+
+            <info.nukoneko.android.ho_n.controller.common.view.NKRoundImageView
+                android:id="@+id/tweet_action_tweet_target_user_icon"
+                android:layout_width="@dimen/tweet_head"
+                android:layout_height="@dimen/tweet_head"
+                android:scaleType="centerCrop"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_dummy_human"/>
+
+            <TextView
+                android:id="@+id/tweet_action_tweet_target_user_name"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/tweet_head"
+                android:gravity="center_vertical"
+                android:layout_toRightOf="@id/tweet_action_tweet_target_user_icon"
+                android:text="ユーザー名"
+                android:textSize="16sp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@android:color/white"
+                android:layout_weight="1"/>
+
+            <ScrollView
+                android:id="@+id/tweet_action_tweet_target_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@id/tweet_action_tweet_target_user_icon"
+                android:layout_margin="8dp">
+                <TextView
+                    android:id="@+id/tweet_action_tweet_target_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:background="@android:color/white"
+                    android:minHeight="100dp"
+                    android:maxHeight="300dp"
+                    android:textSize="14sp" />
+            </ScrollView>
+
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/tweet_action_tweet_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:padding="8dp"
+            android:background="@android:color/white"
+            android:layout_below="@id/tweet_action_tweet_target_view"
+            android:minHeight="100dp"
+            android:gravity="top|left"
+            android:textSize="17sp"/>
+
+        <Button
+            android:id="@+id/tweet_action_tweet_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tweet_action_tweet_text"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/ic_tweet"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+</RelativeLayout>
