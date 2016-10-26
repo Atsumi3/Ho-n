@@ -1,6 +1,7 @@
 package info.nukoneko.android.ho_n.controller.main.twitter;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -8,11 +9,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.jakewharton.rxbinding.view.RxView;
+import com.jakewharton.rxbinding.widget.RxTextView;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -24,6 +30,11 @@ import info.nukoneko.android.ho_n.sys.util.rx.RxUtil;
 import info.nukoneko.android.ho_n.sys.util.rx.RxWrap;
 import info.nukoneko.android.ho_n.sys.util.text.NKToast;
 import info.nukoneko.android.ho_n.sys.util.twitter.NKTwitterUtil;
+import info.nukoneko.android.ho_n.sys.util.view.NKProgressUtil;
+import rx.Observable;
+import rx.android.plugins.RxAndroidPlugins;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.User;
@@ -36,8 +47,8 @@ public final class NKTweetDialog extends BaseDialogFragment {
     static private final String EXTRA_REPLY_TWEET = "replay_tweet";
     static private final String EXTRA_USER_ID = "user_id";
 
-    @BindView(R.id.tweet_action_tweet_back)
-    ImageView tweetBackImageView;
+    @BindView(R.id.tweet_action_tweet_view)
+    RelativeLayout tweetBackView;
 
     @BindView(R.id.tweet_action_tweet_target_view)
     RelativeLayout tweetTargetView;
@@ -54,6 +65,9 @@ public final class NKTweetDialog extends BaseDialogFragment {
     @BindView(R.id.tweet_action_tweet_text)
     EditText tweetEditText;
 
+    @BindView(R.id.tweet_action_tweet_send)
+    ImageButton tweetSendButton;
+
     @OnClick(R.id.btn_cancel)
     void onClickCancel(View view) {
         dismiss();
@@ -69,14 +83,20 @@ public final class NKTweetDialog extends BaseDialogFragment {
                         statusUpdate.setInReplyToStatusId(targetStatus.getId());
                     }
 
-                    RxWrap
-                            .create(RxUtil.createObservable(() -> twitter.updateStatus(statusUpdate)),
-                                    bindToLifecycle())
+                    RxWrap.create(RxUtil.createObservable(() -> twitter.updateStatus(statusUpdate)),
+                            NKProgressUtil.createProgress(getContext(), R.string.sending),
+                            bindToLifecycle())
                             .subscribe(status -> {
-                                NKToast.show(getContext(), "成功しました");
+                                Optional.ofParsable(getContext(), NKTweetDialogListener.class)
+                                        .subscribe(nkTweetDialogListener -> {
+                                            nkTweetDialogListener.onTweetDialogTweetSuccess(status);
+                                        });
                                 dismiss();
                             }, throwable -> {
-                                NKToast.show(getContext(), "失敗しました");
+                                Optional.ofParsable(getContext(), NKTweetDialogListener.class)
+                                        .subscribe(nkTweetDialogListener -> {
+                                            nkTweetDialogListener.onTweetDialogTweetFailed(throwable);
+                                        });
                             });
                 });
     }
@@ -135,11 +155,28 @@ public final class NKTweetDialog extends BaseDialogFragment {
             NKPicasso.getInstance()
                     .load(user.getProfileImageURLHttps()).into(tweetTargetUserIconImageView);
 
-           tweetTargetUserNameTextView.setText(user.getName());
+            tweetTargetUserNameTextView.setText(user.getName());
 
             tweetEditText.setText(String.format("@%s ", user.getScreenName()));
             tweetEditText.setSelection(tweetEditText.getText().length());
         }
+
+        tweetSendButton.setEnabled(false);
+
+        RxTextView.textChanges(tweetEditText)
+                .compose(bindToLifecycle())
+                .map(charSequence -> charSequence.length() > 0)
+                .subscribe(enable -> {
+                    tweetSendButton.setEnabled(enable);
+                });
+
+        RxView.clicks(tweetBackView).subscribe(aVoid -> {
+            Optional
+                    .ofParsable(getContext().getSystemService(Context.INPUT_METHOD_SERVICE), InputMethodManager.class)
+                    .subscribe(imm -> {
+                        imm.hideSoftInputFromWindow(tweetBackView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    });
+        });
     }
     ////////////////////////////////////////
 

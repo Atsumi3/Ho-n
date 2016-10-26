@@ -6,7 +6,10 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.PagerTabStrip;
+import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -18,21 +21,24 @@ import butterknife.OnClick;
 import info.nukoneko.android.ho_n.R;
 import info.nukoneko.android.ho_n.controller.common.view.NKSwipeRefreshLayout;
 import info.nukoneko.android.ho_n.controller.main.twitter.NKTweetDialog;
+import info.nukoneko.android.ho_n.controller.main.twitter.NKTweetDialogListener;
 import info.nukoneko.android.ho_n.controller.main.twitter.NKTwitterAuthActivity;
 import info.nukoneko.android.ho_n.controller.main.twitter.NKTwitterTabPagerAdapter;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabMainMentionsFragment;
+import info.nukoneko.android.ho_n.sys.eventbus.NKEventBusProvider;
+import info.nukoneko.android.ho_n.sys.eventbus.NKEventTwitter;
 import info.nukoneko.android.ho_n.sys.eventbus.event.NKTwitterUserStreamListener;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabFragmentAbstract;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabFragmentListener;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabMainFavoriteFragment;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabMainTimelineFragment;
-import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabMainUserFragment;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.OnClickTweetListener;
 import info.nukoneko.android.ho_n.sys.base.BaseActivity;
+import info.nukoneko.android.ho_n.sys.eventbus.event.OnStreamFavorite;
+import info.nukoneko.android.ho_n.sys.eventbus.event.OnStreamUnfavorite;
 import info.nukoneko.android.ho_n.sys.util.rx.Optional;
 import info.nukoneko.android.ho_n.sys.util.twitter.NKTwitterUtil;
 import rx.Observable;
-import rx.functions.Action1;
 import twitter4j.Status;
 import twitter4j.User;
 
@@ -41,7 +47,7 @@ import twitter4j.User;
  */
 
 public final class NKMainActivity extends BaseActivity
-        implements NKTweetTabFragmentListener, OnClickTweetListener {
+        implements NKTweetTabFragmentListener, OnClickTweetListener, NKTweetDialogListener, NKTopEventListener {
 
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
@@ -51,6 +57,9 @@ public final class NKMainActivity extends BaseActivity
 
     @BindView(R.id.pager)
     ViewPager viewPager;
+
+    @BindView(R.id.pager_tab_strip)
+    PagerTabStrip tabStrip;
 
     @OnClick(R.id.btn_tweet)
     void onClickTweet(View view) {
@@ -93,6 +102,18 @@ public final class NKMainActivity extends BaseActivity
             startActivity(new Intent(this, NKTwitterAuthActivity.class));
         }
 
+        Optional.ofParsable(tabStrip, PagerTitleStrip.class).subscribe(pagerTitleStrip -> {
+            pagerTitleStrip.setOnTouchListener((view, motionEvent) -> {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    assert fragmentAdapter != null;
+                    Optional.ofParsable(fragmentAdapter.getItem(viewPager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
+                            .subscribe(nkTweetTabFragmentAbstract -> {
+                                nkTweetTabFragmentAbstract.getRecyclerView().smoothScrollToPosition(0);
+                            });
+                }
+                return false;
+            });
+        });
     }
 
     @Override
@@ -106,13 +127,19 @@ public final class NKMainActivity extends BaseActivity
 
     //*** Function
     private void refresh() {
-        Optional.ofNullable(getSupportFragmentManager().getFragments()).subscribe(fragments -> {
-            Observable.from(fragments).forEach(fragment -> {
-                if (fragment instanceof NKTweetTabFragmentAbstract) {
-                    ((NKTweetTabFragmentAbstract) fragment).firstLoad();
-                }
-            });
-        });
+        // AllRefresh
+//        Optional.ofNullable(getSupportFragmentManager().getFragments()).subscribe(fragments -> {
+//            Observable.from(fragments).forEach(fragment -> {
+//                if (fragment instanceof NKTweetTabFragmentAbstract) {
+//                    ((NKTweetTabFragmentAbstract) fragment).firstLoad();
+//                }
+//            });
+//        });
+
+        // SingleRefresh
+        assert fragmentAdapter != null;
+        Optional.ofParsable(fragmentAdapter.getItem(viewPager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
+                .subscribe(NKTweetTabFragmentAbstract::firstLoad);
     }
 
     private void makeStream(long userId) {
@@ -130,6 +157,11 @@ public final class NKMainActivity extends BaseActivity
         });
     }
 
+    @Override
+    public void showSnackBar(String text) {
+        Snackbar.make(coordinatorLayout, text, Snackbar.LENGTH_LONG).show();
+    }
+
     //*** TabFragment Listener
     @Override
     public void refreshEnd() {
@@ -144,17 +176,17 @@ public final class NKMainActivity extends BaseActivity
     //*** TweetListener
     @Override
     public void onClickUserIcon(Status status) {
-        Snackbar.make(coordinatorLayout, status.getUser().getName(), Snackbar.LENGTH_LONG).show();
+        showSnackBar("未実装");
     }
 
     @Override
     public void onClickTweetFavorite(Status status) {
-        Snackbar.make(coordinatorLayout, status.getText(), Snackbar.LENGTH_LONG).show();
+        showSnackBar("未実装");
     }
 
     @Override
     public void onClickTweetReTweet(Status status) {
-        Snackbar.make(coordinatorLayout, status.getText(), Snackbar.LENGTH_LONG).show();
+        showSnackBar("未実装");
     }
 
     @Override
@@ -166,5 +198,16 @@ public final class NKMainActivity extends BaseActivity
                     NKTweetDialog.newInstance(nkTweetTabFragmentAbstract.getManagingUserId(), status)
                             .show(getSupportFragmentManager(), "frag");
                 });
+    }
+
+    //*** TweetDialogListener
+    @Override
+    public void onTweetDialogTweetSuccess(Status status) {
+        showSnackBar("ツイートしました");
+    }
+
+    @Override
+    public void onTweetDialogTweetFailed(Throwable throwable) {
+        showSnackBar("ツイートに失敗しました");
     }
 }

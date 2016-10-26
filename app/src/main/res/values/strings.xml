@@ -12,5 +12,8 @@
     <string name="twitter_callback_schema">nukoneko</string>
     <string name="twitter_callback_host">ho-n</string>
     <string name="twitter_callback_path">/auth</string>
+    <string name="sending">送信しています...</string>
+
+    <!-- Text -->
 
 </resources>

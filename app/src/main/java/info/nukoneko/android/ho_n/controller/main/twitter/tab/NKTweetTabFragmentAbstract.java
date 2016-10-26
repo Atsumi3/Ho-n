@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
 
@@ -15,19 +14,17 @@ import java.util.List;
 import butterknife.BindView;
 import info.nukoneko.android.ho_n.R;
 import info.nukoneko.android.ho_n.controller.common.view.NKEndlessScrollListener;
+import info.nukoneko.android.ho_n.controller.main.NKTopEventListener;
 import info.nukoneko.android.ho_n.sys.base.BaseFragment;
 import info.nukoneko.android.ho_n.sys.eventbus.NKEventTwitter;
 import info.nukoneko.android.ho_n.sys.eventbus.event.OnStreamDeletionNoticeStatus;
 import info.nukoneko.android.ho_n.sys.eventbus.event.OnStreamFavorite;
 import info.nukoneko.android.ho_n.sys.eventbus.event.OnStreamRetweetedRetweet;
-import info.nukoneko.android.ho_n.sys.eventbus.event.OnStreamStatus;
 import info.nukoneko.android.ho_n.sys.exeption.ArgumentsNotFindException;
 import info.nukoneko.android.ho_n.sys.util.rx.Optional;
 import info.nukoneko.android.ho_n.sys.util.rx.RxUtil;
 import info.nukoneko.android.ho_n.sys.util.rx.RxWrap;
 import info.nukoneko.android.ho_n.sys.util.twitter.NKTwitterUtil;
-import rx.Observable;
-import rx.functions.Action1;
 import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -74,7 +71,7 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment
     public void onResume() {
         super.onResume();
 
-        RxWrap.eventCreate(bindToLifecycle()).subscribe(nkEvent -> {
+        RxWrap.eventReceive(bindToLifecycle()).subscribe(nkEvent -> {
             Optional.ofParsable(nkEvent, NKEventTwitter.class)
                     .subscribe(event -> {
                         if (event.getParentUserId() != getManagingUserId()) return;
@@ -88,6 +85,17 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment
                         // Favイベントは共通
                         Optional.ofParsable(event, OnStreamFavorite.class).subscribe(onStreamFavorite -> {
                             adapter.update(onStreamFavorite.getFavoritedStatus());
+                            Optional.ofParsable(getContext(), NKTopEventListener.class)
+                                    .subscribe(nkTopEventListener -> {
+                                        nkTopEventListener.showSnackBar("ふぁぼられたみたい");
+                                    });
+                        });
+
+                        Optional.ofParsable(event, OnStreamRetweetedRetweet.class).subscribe(onStreamRetweetedRetweet -> {
+                            Optional.ofParsable(getContext(), NKTopEventListener.class)
+                                    .subscribe(nkTopEventListener -> {
+                                        nkTopEventListener.showSnackBar("RTがRTされたみたい");
+                                    });
                         });
                     });
         });
@@ -126,6 +134,10 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment
         return user;
     }
 
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
+
     @Override
     public void onDestroyView() {
         recyclerView.setAdapter(null);
@@ -162,14 +174,18 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment
     }
 
     public void firstLoad() {
-        if (getAdapter().getItemCount() > 0) {
-            Optional.ofNullable(listener).subscribe(NKTweetTabFragmentListener::refreshEnd);
-            return;
-        }
-        loadTweet();
+//        if (getAdapter().getItemCount() > 0) {
+//            Optional.ofNullable(listener).subscribe(NKTweetTabFragmentListener::refreshEnd);
+//            return;
+//        }
+        loadTweet(true);
     }
 
     void loadTweet() {
+        loadTweet(false);
+    }
+
+    void loadTweet(boolean loadForceFirst) {
         // ロードのためのページング取得
         Twitter twitter = NKTwitterUtil.getInstance(getContext(), getManagingUserId());
         if (twitter == null) {
@@ -179,7 +195,7 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment
         Paging paging;
         {
             Status lastItem = getAdapter().getLastItem();
-            if (lastItem == null) {
+            if (lastItem == null || loadForceFirst) {
                 paging = new Paging(1);
             } else {
                 paging = new Paging();
@@ -201,7 +217,11 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment
                         recyclerView.setVisibility(View.VISIBLE);
                         progressView.setVisibility(View.GONE);
                     }
-                    adapter.addAll(statuses);
+                    if (loadForceFirst) {
+                        adapter.putAll(statuses);
+                    } else {
+                        adapter.addAll(statuses);
+                    }
                     Optional.ofNullable(listener).subscribe(NKTweetTabFragmentListener::refreshEnd);
                 }, Throwable::printStackTrace);
     }
@@ -210,7 +230,7 @@ public abstract class NKTweetTabFragmentAbstract extends BaseFragment
     @Override
     final public void onInserted(int position, Status status) {
         if (position == 0 && 100 > recyclerView.computeVerticalScrollOffset()) {
-            recyclerView.scrollToPosition(0);
+            recyclerView.smoothScrollToPosition(0);
         }
     }
 

@@ -2,11 +2,6 @@ package info.nukoneko.android.ho_n.sys.util.rx;
 
 import android.app.ProgressDialog;
 
-import com.trello.rxlifecycle.LifecycleProvider;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import info.nukoneko.android.ho_n.sys.eventbus.NKEvent;
 import info.nukoneko.android.ho_n.sys.eventbus.NKEventBusProvider;
 import rx.Observable;
@@ -25,21 +20,31 @@ import rx.schedulers.Schedulers;
 public final class RxWrap {
     private RxWrap(){}
 
-    public static <T> Observable<T> create(Observable<T> observable) {
+    private static <T> Observable<T> createBase(Observable<T> observable) {
         return observable
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public static <T> Observable<T> create(Observable<T> observable) {
+        return createBase(observable);
+    }
+
     public static <T> Observable<T> create(Observable<T> observable, ProgressDialog progressDialog) {
-        return observable
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
+        return createBase(observable)
                 .doOnSubscribe(progressDialog::show)
                 .doOnCompleted(progressDialog::dismiss);
     }
 
-    public static Observable<NKEvent> eventCreate(Observable.Transformer<NKEvent, NKEvent> objectTransformer) {
+    public static <T> Observable<T> create(Observable<T> observable,
+                                           ProgressDialog progressDialog,
+                                           Observable.Transformer<T, T> objectTransformer) {
+        return createBase(observable.compose(objectTransformer))
+                .doOnSubscribe(progressDialog::show)
+                .doOnCompleted(progressDialog::dismiss);
+    }
+
+    public static Observable<NKEvent> eventReceive(Observable.Transformer<NKEvent, NKEvent> objectTransformer) {
         return NKEventBusProvider.getInstance().toObservable()
                 .compose(objectTransformer)
                 .observeOn(AndroidSchedulers.mainThread());

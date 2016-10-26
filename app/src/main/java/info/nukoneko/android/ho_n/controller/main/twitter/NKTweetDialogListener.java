@@ -1,0 +1,1 @@
+package info.nukoneko.android.ho_n.controller.main.twitter;import twitter4j.Status;/** * Created by TEJNEK on 2016/10/27. */public interface NKTweetDialogListener {    void onTweetDialogTweetSuccess(Status status);    void onTweetDialogTweetFailed(Throwable throwable);}
