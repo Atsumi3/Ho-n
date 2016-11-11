@@ -20,9 +20,6 @@ import info.nukoneko.android.ho_n.sys.util.rx.Optional;
  */
 
 public abstract class BaseDialogFragment extends RxDialogFragment {
-
-    private Unbinder mUnBinder;
-
     @LayoutRes
     abstract public int dialogLayoutId();
 
@@ -41,20 +38,12 @@ public abstract class BaseDialogFragment extends RxDialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(dialogLayoutId(), container, false);
-        mUnBinder = ButterKnife.bind(this, view);
-        return view;
+        return inflater.inflate(dialogLayoutId(), container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         dialogSetupParams(getArguments());
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Optional.ofNullable(mUnBinder).subscribe(Unbinder::unbind);
     }
 }

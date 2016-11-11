@@ -8,29 +8,25 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxTextView;
 
-import butterknife.BindView;
-import butterknife.OnClick;
+import java.io.Serializable;
+
 import info.nukoneko.android.ho_n.R;
+import info.nukoneko.android.ho_n.databinding.DialogTweetBinding;
 import info.nukoneko.android.ho_n.sys.base.BaseDialogFragment;
-import info.nukoneko.android.ho_n.sys.util.image.NKPicasso;
 import info.nukoneko.android.ho_n.sys.util.rx.Optional;
 import info.nukoneko.android.ho_n.sys.util.rx.RxUtil;
 import info.nukoneko.android.ho_n.sys.util.rx.RxWrap;
 import info.nukoneko.android.ho_n.sys.util.twitter.NKTwitterUtil;
 import info.nukoneko.android.ho_n.sys.util.view.NKProgressUtil;
+import rx.functions.Action1;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
-import twitter4j.User;
 
 /**
  * Created by atsumi on 2016/10/25.
@@ -40,40 +36,38 @@ public final class NKTweetDialog extends BaseDialogFragment {
     static private final String EXTRA_REPLY_TWEET = "replay_tweet";
     static private final String EXTRA_USER_ID = "user_id";
 
-    @BindView(R.id.tweet_action_tweet_view)
-    RelativeLayout tweetBackView;
+    static public NKTweetDialog newInstance(long userId) {
+        return newInstance(userId, null);
+    }
 
-    @BindView(R.id.tweet_action_tweet_target_view)
-    RelativeLayout tweetTargetView;
+    static public NKTweetDialog newInstance(long userId, @Nullable Status status) {
+        NKTweetDialog dialog = new NKTweetDialog();
+        Bundle bundle = new Bundle();
+        bundle.putLong(EXTRA_USER_ID, userId);
 
-    @BindView(R.id.tweet_action_tweet_target_text)
-    TextView tweetTargetTextView;
+        if (status != null) {
+            if (status.isRetweet()) {
+                bundle.putSerializable(EXTRA_REPLY_TWEET, status.getRetweetedStatus());
+            } else {
+                bundle.putSerializable(EXTRA_REPLY_TWEET, status);
+            }
+        }
 
-    @BindView(R.id.tweet_action_tweet_target_user_icon)
-    ImageView tweetTargetUserIconImageView;
+        dialog.setArguments(bundle);
+        return dialog;
+    }
 
-    @BindView(R.id.tweet_action_tweet_target_user_name)
-    TextView tweetTargetUserNameTextView;
-
-    @BindView(R.id.tweet_action_tweet_text)
-    EditText tweetEditText;
-
-    @BindView(R.id.tweet_action_tweet_send)
-    ImageButton tweetSendButton;
-
-    @OnClick(R.id.btn_cancel)
-    void onClickCancel(View view) {
+    public void onClickCancel(View view) {
         dismiss();
     }
 
-    @OnClick(R.id.tweet_action_tweet_send)
-    void onClickSend(View view) {
-        Optional.ofNullable(NKTwitterUtil.getInstance(getContext(), currentUserId))
+    public void onClickSend(View view) {
+        Optional.ofNullable(NKTwitterUtil.getInstance(getContext(), getUserId()))
                 .subscribe(twitter -> {
-                    final StatusUpdate statusUpdate = new StatusUpdate(tweetEditText.getText().toString());
+                    final StatusUpdate statusUpdate = new StatusUpdate(binding.tweetActionTweetText.getText().toString());
 
-                    if (targetStatus != null) {
-                        statusUpdate.setInReplyToStatusId(targetStatus.getId());
+                    if (getStatus() != null) {
+                        statusUpdate.setInReplyToStatusId(getStatus().getId());
                     }
 
                     RxWrap.create(RxUtil.createObservable(() -> twitter.updateStatus(statusUpdate)),
@@ -94,14 +88,6 @@ public final class NKTweetDialog extends BaseDialogFragment {
                 });
     }
 
-    /**
-     * リプライの時用のツイート
-     */
-    @Nullable
-    Status targetStatus = null;
-
-    long currentUserId = -1;
-
     ////////// Abstract Function ///////////
     @Override
     public int dialogLayoutId() {
@@ -114,105 +100,57 @@ public final class NKTweetDialog extends BaseDialogFragment {
         return dialog;
     }
 
+    private DialogTweetBinding binding;
+
     @Override
     public void dialogSetupParams(Bundle bundle) {
-        Optional.ofNullable(bundle).subscribe(bundle1 -> {
-            Optional.ofParsable(bundle1.getSerializable(EXTRA_REPLY_TWEET), Status.class)
-                    .subscribe(status -> {
-                        targetStatus = status;
-                    });
+        binding = DialogTweetBinding.bind(getView());
+        binding.setUserId(getUserId());
+        binding.setDialog(this);
 
-            Optional.ofParsable(bundle1.getSerializable(EXTRA_USER_ID), Long.class)
-                    .subscribe(userId -> {
-                        currentUserId = userId;
-                    });
+        Optional.ofNullable(getStatus()).subscribe(status -> {
+            binding.setTweet(status);
+            RxView.globalLayouts(binding.tweetActionTweetText).subscribe(aVoid -> {
+                binding.tweetActionTweetText.setSelection(binding.tweetActionTweetText.getText().length());
+            });
         });
 
-        if (currentUserId == -1) {
-            dismiss();
-        }
+        binding.tweetActionTweetSend.setEnabled(false);
 
-        if (targetStatus == null) {
-            // new Tweet
-            tweetTargetView.setVisibility(View.GONE);
-        } else {
-            tweetTargetView.setVisibility(View.VISIBLE);
-            tweetTargetTextView.setText(targetStatus.getText());
-
-            User user;
-            if (targetStatus.isRetweet()) {
-                user = targetStatus.getRetweetedStatus().getUser();
-            } else {
-                user = targetStatus.getUser();
-            }
-            NKPicasso.getInstance()
-                    .load(user.getProfileImageURLHttps()).into(tweetTargetUserIconImageView);
-
-            tweetTargetUserNameTextView.setText(user.getName());
-
-            tweetEditText.setText(String.format("@%s ", user.getScreenName()));
-            tweetEditText.setSelection(tweetEditText.getText().length());
-        }
-
-        tweetSendButton.setEnabled(false);
-
-        RxTextView.textChanges(tweetEditText)
+        RxTextView.textChanges(binding.tweetActionTweetText)
                 .compose(bindToLifecycle())
                 .map(charSequence -> charSequence.length() > 0)
                 .subscribe(enable -> {
-                    tweetSendButton.setEnabled(enable);
+                    binding.tweetActionTweetSend.setEnabled(enable);
                 });
 
-        RxView.clicks(tweetBackView).subscribe(aVoid -> {
+        RxView.clicks(binding.btnCancel).subscribe(aVoid -> {
             Optional
                     .ofParsable(getContext().getSystemService(Context.INPUT_METHOD_SERVICE), InputMethodManager.class)
                     .subscribe(imm -> {
-                        imm.hideSoftInputFromWindow(tweetBackView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                        imm.hideSoftInputFromWindow(binding.btnCancel.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     });
         });
     }
     ////////////////////////////////////////
 
-    static public NKTweetDialog newInstance(long userId) {
-        NKTweetDialog dialog = new NKTweetDialog();
-        Bundle bundle = new Bundle();
-        bundle.putLong(EXTRA_USER_ID, userId);
-        dialog.setArguments(bundle);
-        return dialog;
-    }
 
-    static public NKTweetDialog newInstance(long userId, @NonNull Status status) {
-        NKTweetDialog dialog = new NKTweetDialog();
-        Bundle bundle = new Bundle();
-        bundle.putLong(EXTRA_USER_ID, userId);
-
-        if (status.isRetweet()) {
-            bundle.putSerializable(EXTRA_REPLY_TWEET, status.getRetweetedStatus());
-        } else {
-            bundle.putSerializable(EXTRA_REPLY_TWEET, status);
-        }
-
-        dialog.setArguments(bundle);
-        return dialog;
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+    private Status getStatus() {
+        Serializable serializable = getArguments().getSerializable(EXTRA_REPLY_TWEET);
+        if (serializable != null && serializable instanceof Status) {
+            return (Status) serializable;
+        }
+        return null;
+    }
 
-//        Dialog dialog = getDialog();
-//        if (dialog != null)
-//        {
-//            int width = ViewGroup.LayoutParams.MATCH_PARENT;
-//            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-//            dialog.getWindow().setLayout(width, height);
-//        }
+    private long getUserId() {
+        return getArguments().getLong(EXTRA_USER_ID);
     }
 }

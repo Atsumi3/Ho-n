@@ -1,99 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/tweet_action_tweet_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/back_corner_dialog_tweet"
-                android:layout_margin="8dp">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Button
-        android:id="@+id/btn_cancel"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:background="@android:drawable/ic_menu_close_clear_cancel" />
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="userId"
+            type="long" />
+        <variable
+            name="tweet"
+            type="twitter4j.Status" />
+        <variable
+            name="dialog"
+            type="info.nukoneko.android.ho_n.controller.main.twitter.NKTweetDialog" />
+    </data>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_cancel"
-        android:layout_alignParentStart="true">
-
-        <RelativeLayout
-            android:id="@+id/tweet_action_tweet_target_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:visibility="gone">
-
-            <info.nukoneko.android.ho_n.controller.common.view.NKRoundImageView
-                android:id="@+id/tweet_action_tweet_target_user_icon"
-                android:layout_width="@dimen/tweet_head"
-                android:layout_height="@dimen/tweet_head"
-                android:scaleType="centerCrop"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_dummy_human"/>
-
-            <TextView
-                android:id="@+id/tweet_action_tweet_target_user_name"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/tweet_head"
-                android:gravity="center_vertical"
-                android:layout_toRightOf="@id/tweet_action_tweet_target_user_icon"
-                android:text="ユーザー名"
-                android:textSize="16sp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@android:color/white"
-                android:layout_weight="1"/>
-
-            <ScrollView
-                android:id="@+id/tweet_action_tweet_target_scroll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tweet_action_tweet_target_user_icon"
-                android:layout_margin="8dp">
-                <TextView
-                    android:id="@+id/tweet_action_tweet_target_text"
+    <RelativeLayout android:id="@+id/tweet_action_tweet_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:background="@drawable/back_corner_white"
-                    android:minHeight="50dp"
-                    android:maxHeight="200dp"
-                    android:textSize="14sp" />
-            </ScrollView>
+                    android:background="@drawable/back_corner_dialog_tweet"
+                    android:layout_margin="8dp">
 
-        </RelativeLayout>
-
-        <EditText
-            android:id="@+id/tweet_action_tweet_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:padding="8dp"
-            android:inputType="textMultiLine"
-            android:background="@drawable/back_corner_white"
-            android:layout_below="@id/tweet_action_tweet_target_view"
-            android:minHeight="100dp"
-            android:gravity="top|left"
-            android:textSize="17sp"/>
-
-        <ImageButton
-            android:id="@+id/tweet_action_tweet_send"
+        <Button
+            android:id="@+id/btn_cancel"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_below="@id/tweet_action_tweet_text"
-            android:background="@drawable/selector_send_tweet"
-            android:padding="4dp"
-            android:layout_marginBottom="8dp"
-            android:layout_centerHorizontal="true"/>
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:background="@android:drawable/ic_menu_close_clear_cancel"
+            android:onClick="@{dialog.onClickCancel}"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_cancel"
+            android:layout_alignParentStart="true">
+
+            <RelativeLayout
+                android:id="@+id/tweet_action_tweet_target_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:visibility="@{tweet == null ? View.GONE : View.VISIBLE}">
+
+                <info.nukoneko.android.ho_n.controller.common.view.NKRoundImageView
+                    android:id="@+id/tweet_action_tweet_target_user_icon"
+                    android:layout_width="@dimen/tweet_head"
+                    android:layout_height="@dimen/tweet_head"
+                    android:scaleType="centerCrop"
+                    android:background="@android:color/transparent"
+                    app:imageUrl="@{tweet.retweet ? tweet.retweetedStatus.user.profileImageURLHttps : tweet.user.profileImageURLHttps}" />
+
+                <TextView
+                    android:id="@+id/tweet_action_tweet_target_user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/tweet_head"
+                    android:gravity="center_vertical"
+                    android:layout_toRightOf="@id/tweet_action_tweet_target_user_icon"
+                    android:text="@{tweet.retweet ? tweet.retweetedStatus.user.name : tweet.user.name}"
+                    android:textSize="16sp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@android:color/white" />
+
+                <ScrollView
+                    android:id="@+id/tweet_action_tweet_target_scroll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tweet_action_tweet_target_user_icon"
+                    android:layout_margin="8dp">
+                    <TextView
+                        android:id="@+id/tweet_action_tweet_target_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{tweet.text}"
+                        android:padding="8dp"
+                        android:background="@drawable/back_corner_white"
+                        android:minHeight="50dp"
+                        android:maxHeight="200dp"
+                        android:textSize="14sp" />
+                </ScrollView>
+
+            </RelativeLayout>
+
+            <EditText
+                android:id="@+id/tweet_action_tweet_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:inputType="textMultiLine"
+                android:background="@drawable/back_corner_white"
+                android:layout_below="@id/tweet_action_tweet_target_view"
+                android:minHeight="100dp"
+                android:gravity="top|left"
+                android:text='@{tweet != null ? String.format("@%s ", tweet.user.screenName) : ""}'
+                android:textSize="17sp"/>
+
+            <ImageButton
+                android:id="@+id/tweet_action_tweet_send"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_below="@id/tweet_action_tweet_text"
+                android:background="@drawable/selector_send_tweet"
+                android:padding="4dp"
+                android:layout_marginBottom="8dp"
+                android:layout_centerHorizontal="true"
+                android:onClick="@{dialog.onClickSend}"/>
+
+        </RelativeLayout>
     </RelativeLayout>
-</RelativeLayout>
+
+</layout>

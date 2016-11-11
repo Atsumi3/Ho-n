@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import butterknife.BindString;
-import butterknife.ButterKnife;
 import info.nukoneko.android.ho_n.R;
 import info.nukoneko.android.ho_n.controller.main.NKMainActivity;
 import info.nukoneko.android.ho_n.sys.base.BaseActivity;
@@ -23,11 +21,6 @@ import twitter4j.auth.RequestToken;
  */
 
 public final class NKTwitterAuthActivity extends BaseActivity {
-
-    // Twitter callback
-    @BindString(R.string.twitter_callback_uri)
-    String twitterAuthCallbackUri;
-
     @Nullable
     Twitter twitterAuthInstance;
     @Nullable
@@ -36,7 +29,6 @@ public final class NKTwitterAuthActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
         startAuth();
     }
 
@@ -45,7 +37,7 @@ public final class NKTwitterAuthActivity extends BaseActivity {
         super.onNewIntent(intent);
 
         Optional.ofNullable(intent.getData()).subscribe(uri -> {
-            if (!uri.toString().startsWith(twitterAuthCallbackUri)) return;
+            if (!uri.toString().startsWith(getString(R.string.twitter_callback_uri))) return;
             RxWrap.create(RxUtil.createObservable(() -> {
                 if (twitterAuthInstance == null) return null;
                 return twitterAuthInstance
@@ -70,7 +62,7 @@ public final class NKTwitterAuthActivity extends BaseActivity {
         RxWrap.create(RxUtil.createObservable(() -> {
             twitterAuthInstance.setOAuthAccessToken(null);
             twitterAuthRequestToken =
-                    twitterAuthInstance.getOAuthRequestToken(twitterAuthCallbackUri);
+                    twitterAuthInstance.getOAuthRequestToken(getString(R.string.twitter_callback_uri));
             return twitterAuthRequestToken.getAuthorizationURL();
         }), bindToLifecycle())
                 .subscribe(s -> {
