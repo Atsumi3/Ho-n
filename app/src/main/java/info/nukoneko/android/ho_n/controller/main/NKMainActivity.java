@@ -1,14 +1,12 @@
 package info.nukoneko.android.ho_n.controller.main;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.PagerTitleStrip;
-import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -16,10 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import info.nukoneko.android.ho_n.R;
-import info.nukoneko.android.ho_n.controller.common.view.NKSwipeRefreshLayout;
 import info.nukoneko.android.ho_n.controller.main.twitter.NKTweetDialog;
 import info.nukoneko.android.ho_n.controller.main.twitter.NKTweetDialogListener;
 import info.nukoneko.android.ho_n.controller.main.twitter.NKTwitterAuthActivity;
@@ -30,6 +25,7 @@ import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabMainFavo
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabMainMentionsFragment;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.NKTweetTabMainTimelineFragment;
 import info.nukoneko.android.ho_n.controller.main.twitter.tab.OnClickTweetListener;
+import info.nukoneko.android.ho_n.databinding.ActivityMainBinding;
 import info.nukoneko.android.ho_n.sys.base.BaseActivity;
 import info.nukoneko.android.ho_n.sys.eventbus.event.NKTwitterUserStreamListener;
 import info.nukoneko.android.ho_n.sys.util.rx.Optional;
@@ -44,43 +40,30 @@ import twitter4j.User;
 
 public final class NKMainActivity extends BaseActivity
         implements NKTweetTabFragmentListener, OnClickTweetListener, NKTweetDialogListener, NKTopEventListener {
-
-    @BindView(R.id.coordinator_layout)
-    CoordinatorLayout coordinatorLayout;
-
-    @BindView(R.id.swipe_refresh_layout)
-    NKSwipeRefreshLayout swipeRefreshLayout;
-
-    @BindView(R.id.pager)
-    ViewPager viewPager;
-
-    @BindView(R.id.pager_tab_strip)
-    PagerTabStrip tabStrip;
-
-    @OnClick(R.id.btn_tweet)
-    void onClickTweet(View view) {
-        assert fragmentAdapter != null;
-
-        Optional.ofParsable(fragmentAdapter.getItem(viewPager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
-                .subscribe(nkTweetTabFragmentAbstract -> {
-                    NKTweetDialog.newInstance(nkTweetTabFragmentAbstract.getManagingUserId()).show(getSupportFragmentManager(), "frag");
-                });
-    }
-
     @Nullable
     NKTwitterTabPagerAdapter fragmentAdapter;
 
     private Map<Long, NKTwitterUserStreamListener> currentStream = new HashMap<>();
 
+    ActivityMainBinding binding;
+
+    public void onClickTweet(View view) {
+        assert fragmentAdapter != null;
+        Optional.ofParsable(fragmentAdapter.getItem(binding.pager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
+                .subscribe(nkTweetTabFragmentAbstract -> {
+                    NKTweetDialog.newInstance(nkTweetTabFragmentAbstract.getManagingUserId()).show(getSupportFragmentManager(), "frag");
+                });
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        swipeRefreshLayout.setOnRefreshListener(this::refresh);
+        binding.swipeRefreshLayout.setOnRefreshListener(this::refresh);
 
         fragmentAdapter = new NKTwitterTabPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(fragmentAdapter);
+        binding.pager.setAdapter(fragmentAdapter);
 
         // viewSetting
         ArrayList<Long> ids = NKTwitterUtil.getAccountIds();
@@ -98,11 +81,11 @@ public final class NKMainActivity extends BaseActivity
             startActivity(new Intent(this, NKTwitterAuthActivity.class));
         }
 
-        Optional.ofParsable(tabStrip, PagerTitleStrip.class).subscribe(pagerTitleStrip -> {
+        Optional.ofParsable(binding.pagerTabStrip, PagerTitleStrip.class).subscribe(pagerTitleStrip -> {
             pagerTitleStrip.setOnTouchListener((view, motionEvent) -> {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     assert fragmentAdapter != null;
-                    Optional.ofParsable(fragmentAdapter.getItem(viewPager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
+                    Optional.ofParsable(fragmentAdapter.getItem(binding.pager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
                             .subscribe(nkTweetTabFragmentAbstract -> {
                                 nkTweetTabFragmentAbstract.getRecyclerView().smoothScrollToPosition(0);
                             });
@@ -115,9 +98,9 @@ public final class NKMainActivity extends BaseActivity
     @Override
     protected void onStart() {
         super.onStart();
-        if (viewPager.getAdapter() == null || fragmentAdapter == null) {
+        if (binding.pager.getAdapter() == null || fragmentAdapter == null) {
             fragmentAdapter = new NKTwitterTabPagerAdapter(getSupportFragmentManager());
-            viewPager.setAdapter(fragmentAdapter);
+            binding.pager.setAdapter(fragmentAdapter);
         }
     }
 
@@ -134,7 +117,7 @@ public final class NKMainActivity extends BaseActivity
 
         // SingleRefresh
         assert fragmentAdapter != null;
-        Optional.ofParsable(fragmentAdapter.getItem(viewPager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
+        Optional.ofParsable(fragmentAdapter.getItem(binding.pager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
                 .subscribe(NKTweetTabFragmentAbstract::firstLoad);
     }
 
@@ -155,13 +138,13 @@ public final class NKMainActivity extends BaseActivity
 
     @Override
     public void showSnackBar(String text) {
-        Snackbar.make(coordinatorLayout, text, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(binding.coordinatorLayout, text, Snackbar.LENGTH_LONG).show();
     }
 
     //*** TabFragment Listener
     @Override
     public void refreshEnd() {
-        swipeRefreshLayout.setRefreshing(false);
+        binding.swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -189,7 +172,7 @@ public final class NKMainActivity extends BaseActivity
     public void onClickTweet(Status status) {
         assert fragmentAdapter != null;
 
-        Optional.ofParsable(fragmentAdapter.getItem(viewPager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
+        Optional.ofParsable(fragmentAdapter.getItem(binding.pager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
                 .subscribe(nkTweetTabFragmentAbstract -> {
                     NKTweetDialog.newInstance(nkTweetTabFragmentAbstract.getManagingUserId(), status)
                             .show(getSupportFragmentManager(), "frag");
