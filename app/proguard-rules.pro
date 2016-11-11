@@ -51,6 +51,10 @@
 -dontnote org.**
 -keep class org.** { *; }
 
+-dontwarn android.**
+-dontnote android.**
+-keep class android.** { *; }
+
 ##---------------End: Default Settings  ----------
 
 ##--------------- Butterknife  ----------
@@ -70,14 +74,19 @@
 -dontwarn com.squareup.**
 -dontnote com.squareup.**
 -keep class com.squareup.** { *; }
+-dontwarn okhttp3.**
+-dontnote okhttp3.**
+-keep class okhttp3.** { *; }
 
 ##--------------- Android Support Library ----------
--dontwarn android.support.v4.**
--dontwarn android.support.v7.**
--keep class android.support.v4.** { *; }
--keep class android.support.v7.** {*;}
+-dontwarn android.**
+-dontnote android.**
+-keep class android.** { *; }
+
+-dontwarn com.facebook.**
+-dontnote com.facebook.**
 -keep class com.facebook.** { *; }
--keep class android.webkit.WebViewClient
+
 -keep class * extends android.webkit.WebViewClient
 -keepclassmembers class * extends android.webkit.WebViewClient {
     <methods>;
@@ -108,4 +117,6 @@
 -dontwarn com.squareup.okio.**
 
 #------------- Twitter4j -----------
+-dontwarn twitter4j.**
+-dontnote twitter4j.**
 -keep class twitter4j.**  { *; }
