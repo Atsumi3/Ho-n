@@ -5,6 +5,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.PagerTitleStrip;
 import android.view.MotionEvent;
@@ -48,11 +49,11 @@ public final class NKMainActivity extends BaseActivity
     ActivityMainBinding binding;
 
     public void onClickTweet(View view) {
-        assert fragmentAdapter != null;
-        Optional.ofParsable(fragmentAdapter.getItem(binding.pager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
-                .subscribe(nkTweetTabFragmentAbstract -> {
-                    NKTweetDialog.newInstance(nkTweetTabFragmentAbstract.getManagingUserId()).show(getSupportFragmentManager(), "frag");
-                });
+        if (getCurrentTabFragment() != null) {
+            Optional.ofNullable(getCurrentTabFragment().getManagingUserId()).subscribe(userId -> {
+                NKTweetDialog.newInstance(userId).show(getSupportFragmentManager(), "frag");
+            });
+        }
     }
 
     @Override
@@ -141,6 +142,17 @@ public final class NKMainActivity extends BaseActivity
         Snackbar.make(binding.coordinatorLayout, text, Snackbar.LENGTH_LONG).show();
     }
 
+    @Nullable
+    private NKTweetTabFragmentAbstract getCurrentTabFragment() {
+        if (fragmentAdapter == null) return null;
+
+        Fragment fragment = fragmentAdapter.getItem(binding.pager.getCurrentItem());
+        if (fragment instanceof NKTweetTabFragmentAbstract) {
+            return (NKTweetTabFragmentAbstract) fragment;
+        }
+        return null;
+    }
+
     //*** TabFragment Listener
     @Override
     public void refreshEnd() {
@@ -170,13 +182,11 @@ public final class NKMainActivity extends BaseActivity
 
     @Override
     public void onClickTweet(Status status) {
-        assert fragmentAdapter != null;
-
-        Optional.ofParsable(fragmentAdapter.getItem(binding.pager.getCurrentItem()), NKTweetTabFragmentAbstract.class)
-                .subscribe(nkTweetTabFragmentAbstract -> {
-                    NKTweetDialog.newInstance(nkTweetTabFragmentAbstract.getManagingUserId(), status)
-                            .show(getSupportFragmentManager(), "frag");
-                });
+        if (getCurrentTabFragment() != null) {
+            Optional.ofNullable(getCurrentTabFragment().getManagingUserId()).subscribe(userId -> {
+                NKTweetDialog.newInstance(userId, status).show(getSupportFragmentManager(), "frag");
+            });
+        }
     }
 
     //*** TweetDialogListener

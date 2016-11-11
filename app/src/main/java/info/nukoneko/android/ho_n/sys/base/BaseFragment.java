@@ -18,9 +18,6 @@ import info.nukoneko.android.ho_n.sys.util.rx.Optional;
  */
 
 public abstract class BaseFragment extends RxFragment {
-
-    private Unbinder mUnBinder;
-
     @LayoutRes
     abstract public int fragmentLayoutId();
 
@@ -29,20 +26,12 @@ public abstract class BaseFragment extends RxFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(fragmentLayoutId(), container, false);
-        mUnBinder = ButterKnife.bind(this, view);
-        return view;
+        return inflater.inflate(fragmentLayoutId(), container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         fragmentSetup(getArguments());
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Optional.ofNullable(mUnBinder).subscribe(Unbinder::unbind);
     }
 }
