@@ -38,12 +38,19 @@
     public void set*(...);
 }
 -keep public class **.R
+
 -dontwarn java.**
+-dontnote java.**
 -keep class java.** { *; }
+
 -dontwarn javax.**
+-dontnote javax.**
 -keep class javax.** { *; }
+
 -dontwarn org.**
+-dontnote org.**
 -keep class org.** { *; }
+
 ##---------------End: Default Settings  ----------
 
 ##--------------- Butterknife  ----------
@@ -60,9 +67,8 @@
 }
 
 ##--------------- square Product ----------
--dontwarn java.nio.file.*
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -dontwarn com.squareup.**
+-dontnote com.squareup.**
 -keep class com.squareup.** { *; }
 
 ##--------------- Android Support Library ----------
