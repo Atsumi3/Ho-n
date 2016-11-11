@@ -136,3 +136,8 @@
 -dontwarn twitter4j.**
 -dontnote twitter4j.**
 -keep class twitter4j.**  { *; }
+
+#------------- Retrolambda -----------
+-dontwarn *.$$Lambda$*.**
+-dontnote *.$$Lambda$*.**
+-keep class *.$$Lambda$*.**  { *; }
