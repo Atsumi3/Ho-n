@@ -19,7 +19,7 @@
     public <init>(android.content.Context, android.util.AttributeSet);
 }
 -keepclasseswithmembernames class * {
-    public <init>(android.content.Context, util.AttributeSet, int);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 -keepclassmembers enum * {
     public static **[] values();
@@ -55,6 +55,10 @@
 -dontnote android.**
 -keep class android.** { *; }
 
+-dontwarn com.google.**
+-dontnote com.google.**
+-keep class com.google.** { *; }
+
 ##---------------End: Default Settings  ----------
 
 ##--------------- Butterknife  ----------
@@ -74,9 +78,14 @@
 -dontwarn com.squareup.**
 -dontnote com.squareup.**
 -keep class com.squareup.** { *; }
+
 -dontwarn okhttp3.**
 -dontnote okhttp3.**
 -keep class okhttp3.** { *; }
+
+-dontwarn okio.**
+-dontnote okio.**
+-keep class okio.**  { *; }
 
 ##--------------- Android Support Library ----------
 -dontwarn android.**
@@ -102,6 +111,10 @@
 -dontwarn java.lang.invoke.*
 
 #------------- RxJava ------------
+-dontwarn rx.internal.**
+-dontnote rx.internal.**
+-keep class rx.internal.**  { *; }
+
 -dontwarn sun.misc.Unsafe
 -keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
    long producerIndex;
@@ -114,7 +127,10 @@
 
 #------------- OkHttp3 Picasso -----------
 -dontwarn com.squareup.okhttp3.**
+-keep class com.squareup.okhttp3.**  { *; }
+
 -dontwarn com.squareup.okio.**
+-keep class com.squareup.okio.**  { *; }
 
 #------------- Twitter4j -----------
 -dontwarn twitter4j.**
