@@ -59,6 +59,9 @@
 -dontnote com.google.**
 -keep class com.google.** { *; }
 
+-dontnote com.google.vending.**
+-dontnote com.android.vending.licensing.**
+
 ##---------------End: Default Settings  ----------
 
 ##--------------- Butterknife  ----------
@@ -141,3 +144,6 @@
 -dontwarn *.$$Lambda$*.**
 -dontnote *.$$Lambda$*.**
 -keep class *.$$Lambda$*.**  { *; }
+
+#------------- Me -----------
+-dontwarn info.nukoneko.**
