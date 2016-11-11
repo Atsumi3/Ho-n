@@ -62,6 +62,8 @@
 -dontnote com.google.vending.**
 -dontnote com.android.vending.licensing.**
 
+-dontwarn android.databinding.**
+
 ##---------------End: Default Settings  ----------
 
 ##--------------- Butterknife  ----------
