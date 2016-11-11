@@ -144,6 +144,3 @@
 -dontwarn *.$$Lambda$*.**
 -dontnote *.$$Lambda$*.**
 -keep class *.$$Lambda$*.**  { *; }
-
-#------------- Me -----------
--dontwarn info.nukoneko.**
