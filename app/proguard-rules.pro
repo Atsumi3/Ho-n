@@ -111,9 +111,9 @@
 -dontwarn java.lang.invoke.*
 
 #------------- RxJava ------------
--dontwarn rx.internal.**
--dontnote rx.internal.**
--keep class rx.internal.**  { *; }
+-dontwarn rx.**
+-dontnote rx.**
+-keep class rx.**  { *; }
 
 -dontwarn sun.misc.Unsafe
 -keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
