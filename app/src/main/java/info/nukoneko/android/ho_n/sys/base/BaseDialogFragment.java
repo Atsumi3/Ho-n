@@ -11,10 +11,6 @@ import android.view.ViewGroup;
 
 import com.trello.rxlifecycle.components.support.RxDialogFragment;
 
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-import info.nukoneko.android.ho_n.sys.util.rx.Optional;
-
 /**
  * Created by atsumi on 2016/10/20.
  */

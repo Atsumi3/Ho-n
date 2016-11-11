@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 
 import com.jakewharton.rxbinding.view.RxView;
@@ -24,7 +23,6 @@ import info.nukoneko.android.ho_n.sys.util.rx.RxUtil;
 import info.nukoneko.android.ho_n.sys.util.rx.RxWrap;
 import info.nukoneko.android.ho_n.sys.util.twitter.NKTwitterUtil;
 import info.nukoneko.android.ho_n.sys.util.view.NKProgressUtil;
-import rx.functions.Action1;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 
