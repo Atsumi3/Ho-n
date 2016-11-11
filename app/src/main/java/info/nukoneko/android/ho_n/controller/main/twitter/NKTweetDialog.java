@@ -181,7 +181,7 @@ public final class NKTweetDialog extends BaseDialogFragment {
         return dialog;
     }
 
-    static public NKTweetDialog newInstance(long userId, Status status) {
+    static public NKTweetDialog newInstance(long userId, @NonNull Status status) {
         NKTweetDialog dialog = new NKTweetDialog();
         Bundle bundle = new Bundle();
         bundle.putLong(EXTRA_USER_ID, userId);
