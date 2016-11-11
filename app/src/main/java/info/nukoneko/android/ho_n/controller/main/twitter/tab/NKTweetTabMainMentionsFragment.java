@@ -3,9 +3,7 @@ package info.nukoneko.android.ho_n.controller.main.twitter.tab;
 import java.util.List;
 
 import info.nukoneko.android.ho_n.sys.eventbus.NKEventTwitter;
-import info.nukoneko.android.ho_n.sys.eventbus.event.OnStreamFavorite;
 import info.nukoneko.android.ho_n.sys.eventbus.event.OnStreamStatus;
-import info.nukoneko.android.ho_n.sys.eventbus.event.OnStreamUnfavorite;
 import info.nukoneko.android.ho_n.sys.util.rx.Optional;
 import info.nukoneko.android.ho_n.sys.util.rx.RxUtil;
 import twitter4j.Paging;

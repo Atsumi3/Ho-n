@@ -11,8 +11,8 @@ import android.view.LayoutInflater;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import info.nukoneko.android.ho_n.sys.NKAppController;
 import info.nukoneko.android.ho_n.R;
+import info.nukoneko.android.ho_n.sys.NKAppController;
 import info.nukoneko.android.ho_n.sys.util.rx.Optional;
 
 /**

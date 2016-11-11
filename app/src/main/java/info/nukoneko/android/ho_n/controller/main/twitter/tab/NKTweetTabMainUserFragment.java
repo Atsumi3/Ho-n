@@ -1,11 +1,9 @@
 package info.nukoneko.android.ho_n.controller.main.twitter.tab;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import info.nukoneko.android.ho_n.sys.eventbus.NKEventTwitter;
 import info.nukoneko.android.ho_n.sys.util.rx.RxUtil;
-import info.nukoneko.android.ho_n.sys.util.twitter.NKTwitterUtil;
 import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;

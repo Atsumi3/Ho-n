@@ -3,17 +3,13 @@ package info.nukoneko.android.ho_n.sys.util.twitter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.util.ArrayList;
 
-import butterknife.BindString;
 import info.nukoneko.android.ho_n.R;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import rx.Observable;
-import rx.functions.Func1;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
