@@ -4,8 +4,6 @@ apply plugin: 'io.fabric'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
 
-apply plugin: 'android-apt'
-
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
@@ -47,7 +45,7 @@ android {
             }
         }
         debug {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles 'proguard-rules.pro'
         }
         release {
